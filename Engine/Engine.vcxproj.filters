@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Common">
+      <UniqueIdentifier>{8ca14339-2071-46e5-93e7-0175a75b3295}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DX12">
+      <UniqueIdentifier>{d1c82397-ac50-4cb8-9630-02287cb19d58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ImGui">
+      <UniqueIdentifier>{99449ce9-bb5b-4e62-b9d8-2886d58f4afa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ImGui">
+      <UniqueIdentifier>{82cc5636-19e5-4477-bb31-e9bf763eef67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VK">
+      <UniqueIdentifier>{e04beee4-7eed-4410-9d3d-6e1ba377d95b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VK\Base">
+      <UniqueIdentifier>{d65a1c28-2879-40e6-a2f5-3b04bd3bfaf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Application">
+      <UniqueIdentifier>{f49027a4-aad9-433e-a8a3-6e43eb4eebb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\VK">
+      <UniqueIdentifier>{68cd9908-3a54-40ee-a2d4-4043db220620}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\VK\Base">
+      <UniqueIdentifier>{b84d07ac-88d4-496a-9dda-e980b04fd7a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Application">
+      <UniqueIdentifier>{12d78c5d-6ef4-41e3-90c0-1814f2070c45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Common">
+      <UniqueIdentifier>{9e1fbd00-f305-4e37-b5c5-a18a5d03f364}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Common\GLTF">
+      <UniqueIdentifier>{c5e84b0c-0952-490b-9583-c4fbef8d0ace}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common\GLTF">
+      <UniqueIdentifier>{20e7e307-644c-40fc-b535-7c7090e4ef80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common\Misc">
+      <UniqueIdentifier>{0685f9ed-a970-43dd-af62-c28900197f9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Common\Misc">
+      <UniqueIdentifier>{8bb353df-6520-4fae-a148-bd7d9b5d0df8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\VK\Renderer">
+      <UniqueIdentifier>{1dc00c03-c88c-45a5-9a82-e1bcf29ed7b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VK\Renderer">
+      <UniqueIdentifier>{3597bcdc-1c36-49cb-bf71-d37789bed136}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\VK\Extensions">
+      <UniqueIdentifier>{b1f3b0e4-d0f1-4f06-aecc-2e2411d178d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VK\Extensions">
+      <UniqueIdentifier>{fbf99bd4-6ae9-4d05-a55d-78c9dbbd25ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{f3030bc7-35a6-4f28-b166-7d8592475858}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{e8b2e31f-bf99-49ff-989a-b21b5ce01980}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common\Base">
+      <UniqueIdentifier>{8cd68192-fea5-4c8e-b51a-621a75f7f5ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Common\Base">
+      <UniqueIdentifier>{b3b409e8-99fa-4d4f-abf8-977b92ff2b9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common\ShaderCompiler">
+      <UniqueIdentifier>{ccddb9b7-ed42-4e0e-9149-b67fea9ef634}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Common\ShaderCompiler">
+      <UniqueIdentifier>{44762bb4-a59a-4e50-9352-0c20870deebe}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\ImGui\imgui.cpp">
+      <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\ImGui\imgui_draw.cpp">
+      <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\FrameworkWindows.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Application\Application.cpp">
+      <Filter>Source Files\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\GLTF\GltfCommon.cpp">
+      <Filter>Source Files\Common\GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\Misc\Misc.cpp">
+      <Filter>Source Files\Common\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Renderer\Renderer.cpp">
+      <Filter>Source Files\VK\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\Device.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\InstanceProperties.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\DeviceProperties.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\Instance.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\SwapChain.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\FreeSyncHDR.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Extensions\ExtFreeSyncHDR.cpp">
+      <Filter>Source Files\VK\Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\UI\UI.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\Base\ImGuiHelper.cpp">
+      <Filter>Source Files\Common\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\ResourceViewHeaps.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\CommandListRing.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\DynamicBufferRing.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\StaticBufferPool.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\GPUTimstamps.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\Base\Benchmark.cpp">
+      <Filter>Source Files\Common\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\Misc\Camera.cpp">
+      <Filter>Source Files\Common\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\UploadHeap.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\GBuffer.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\Helper.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Extensions\ExtDebugUtils.cpp">
+      <Filter>Source Files\VK\Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\Texture.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\Misc\DDSLoader.cpp">
+      <Filter>Source Files\Common\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\Misc\ImgLoader.cpp">
+      <Filter>Source Files\Common\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\ShaderCompiler\ShaderCompiler.cpp">
+      <Filter>Source Files\Common\ShaderCompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\ShaderCompilerHelper.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\Misc\WICLoader.cpp">
+      <Filter>Source Files\Common\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\ShaderCompiler\DXCHelper.cpp">
+      <Filter>Source Files\Common\ShaderCompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Extensions\ExtValidation.cpp">
+      <Filter>Source Files\VK\Extensions</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\External\ImGui\imgui.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\FrameworkWindows.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Application\Application.h">
+      <Filter>Header Files\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\GLTF\GltfCommon.h">
+      <Filter>Header Files\Common\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Misc\Misc.h">
+      <Filter>Header Files\Common\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Renderer\Renderer.h">
+      <Filter>Header Files\VK\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\Device.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\InstanceProperties.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\DeviceProperties.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\Instance.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\FreeSyncHDR.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\SwapChain.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Extensions\ExtFreeSyncHDR.h">
+      <Filter>Header Files\VK\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\UI\UI.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Base\ImGuiHelper.h">
+      <Filter>Header Files\Common\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\ResourceViewHeaps.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\CommandListRing.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Misc\Ring.h">
+      <Filter>Header Files\Common\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\DynamicBufferRing.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\StaticBufferPool.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\GPUTimestamps.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Base\Benchmark.h">
+      <Filter>Header Files\Common\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Misc\Camera.h">
+      <Filter>Header Files\Common\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\UploadHeap.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\GBuffer.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\Helper.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Extensions\ExtDebugUtils.h">
+      <Filter>Header Files\VK\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\Texture.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Misc\DDSLoader.h">
+      <Filter>Header Files\Common\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Misc\ImgLoader.h">
+      <Filter>Header Files\Common\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\stdafx.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\ShaderCompiler\ShaderCompiler.h">
+      <Filter>Header Files\Common\ShaderCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Misc\Hash.h">
+      <Filter>Header Files\Common\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\ShaderCompilerHelper.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Misc\WICLoader.h">
+      <Filter>Header Files\Common\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\ShaderCompiler\DXCHelper.h">
+      <Filter>Header Files\Common\ShaderCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Extensions\ExtValidation.h">
+      <Filter>Header Files\VK\Extensions</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
