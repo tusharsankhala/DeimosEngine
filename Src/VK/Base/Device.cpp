@@ -6,6 +6,9 @@
 #include "VK/Base/DeviceProperties.h"
 #include "VK/Extensions/ExtDebugUtils.h"
 #include "VK/Extensions/ExtFreeSyncHDR.h"
+#include "VK/Extensions/ExtFp16.h"
+#include "VK/Extensions/ExtRayTracing.h"
+#include "VK/Extensions/ExtVRS.h"
 #include "VK/Extensions/ExtValidation.h"
 #include "Common/Misc/Misc.h"
 
@@ -50,6 +53,14 @@ namespace Engine_VK
 
 	void Device::SetEssentialDeviceExtensions(DeviceProperties* pDp)
 	{
+		m_usingFp16 = ExtFp16CheckExtensions( pDp );
+		ExtRTCheckExtensions( pDp, m_rt10Supported, m_rt11Supported );
+		ExtVRSCheckExtensions( pDp, m_vrs1Supported, m_vrs2Supported );
+		ExtCheckHDRDeviceExtensions( pDp );
+		ExtCheckFSEDeviceExtensions( pDp );
+		ExtCheckFreeSyncHDRDeviceExtensions( pDp );
+		pDp->AddDeviceExtensionName( VK_KHR_SWAPCHAIN_EXTENSION_NAME );
+		pDp->AddDeviceExtensionName(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME );
 	}
 
 	void Device::OnCreateEx(VkInstance vulkanInstance, VkPhysicalDevice physicalDevice, HWND hWnd, DeviceProperties* pDp)
@@ -274,7 +285,7 @@ namespace Engine_VK
 
 	VkPipelineCache Device::GetPipelineCache()
 	{
-
+		return m_pipelineCache;
 	}
 
 	void Device::GPUFlush()

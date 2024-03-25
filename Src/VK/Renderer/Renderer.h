@@ -1,6 +1,9 @@
 #pragma once
 
-#include "Common/stdafx.h"
+#include "VK/Common/stdafx.h"
+
+#include "VK/Base/GBuffer.h"
+#include "VK/PostProcess/MagnifierPS.h"
 
 using namespace Engine_VK;
 

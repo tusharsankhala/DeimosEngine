@@ -1,4 +1,4 @@
-#include "Common/stdafx.h"
+#include "VK/Common/stdafx.h"
 #include "SwapChain.h"
 #include "VK/Extensions/ExtFreeSyncHDR.h"
 #include "VK/Extensions/ExtDebugUtils.h"
@@ -96,7 +96,7 @@ namespace Engine_VK
 	void SwapChain::EnumerateDisplayModes( std::vector<DisplayMode> *pModes, std::vector<const char *> * pNames, bool includeFreesyncHDR,
 										   PresentationMode fullscreenMode, bool enableLocalDimming)
 	{
-		fsHdrEnumerateDisplayModes();
+		fsHdrEnumerateDisplayModes( pModes, includeFreesyncHDR, fullscreenMode, enableLocalDimming );
 	}
 
 	bool SwapChain::IsModeSupported(DisplayMode displayMode, PresentationMode fullScreenMode, bool enableLocalDimming )
@@ -106,6 +106,22 @@ namespace Engine_VK
 		return std::find( displayModesAvailable.begin(), displayModesAvailable.end(), displayMode ) != displayModesAvailable.end();
 	}
 
+
+	VkResult SwapChain::Present()
+	{
+		VkPresentInfoKHR present = {};
+		present.sType				= VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		present.pNext				= NULL;
+		present.waitSemaphoreCount	= 1;
+		present.pWaitSemaphores		= &(m_renderFinishedSemaphores[ m_semaphoreIndex] );
+		present.swapchainCount		= 1;
+		present.pSwapchains			= &m_swapChain;
+		present.pImageIndices		= &m_imageIndex;
+		present.pResults			= NULL;
+
+		VkResult res = vkQueuePresentKHR( m_presentQueue, &present );
+		return res;
+	}
 
 	void SwapChain::SetFullScreen( bool fullscreen )
 	{

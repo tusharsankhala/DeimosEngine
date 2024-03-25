@@ -22,7 +22,7 @@ namespace Engine_VK
 		bool				AddDeviceExtensionName( const char* deviceExtensionName );
 
 		void*				GetNext() { return m_pNext; }
-		void*				SetNewNext( void *pNext ) { m_pNext = pNext; }
+		void				SetNewNext( void *pNext ) { m_pNext = pNext; }
 
 		VkPhysicalDevice	GetPhysicalDevice() { return m_physicalDevice; }
 		void				GetExtensionNamesAndConfigs( std::vector<const char *> *pDevice_extension_names );

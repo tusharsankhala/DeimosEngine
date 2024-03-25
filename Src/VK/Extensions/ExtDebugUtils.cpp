@@ -1,3 +1,4 @@
+#include "VK/Common/stdafx.h"
 #include "VK/Extensions/ExtDebugUtils.h"
 
 namespace Engine_VK
@@ -7,6 +8,12 @@ namespace Engine_VK
 	static PFN_vkCmdEndDebugUtilsLabelEXT		s_vkCmdEndDebugUtilsLabel = nullptr;
 	static bool s_bCanUseDebugUtils = false;
 	static std::mutex s_mutex;
+
+	bool ExtDebugUtilsCheckInstanceExtensions( InstanceProperties* pDp )
+	{
+		s_bCanUseDebugUtils = pDp->AddInstanceExtensionName( "VK_EXT_debug_utils");
+		return s_bCanUseDebugUtils;
+	}
 
 	void ExtDebugUtilsGetProcAddresses( VkDevice device )
 	{

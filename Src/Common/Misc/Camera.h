@@ -56,3 +56,7 @@ private:
 	float				m_pitch = 0.0f;
 	float				m_roll	= 0.0f;
 };
+
+math::Vector4 PolarToVector( float roll, float pitch );
+math::Matrix4 LookAtRH( const math::Vector4& eyePos, const math::Vector4& lookAt );
+math::Vector4 MoveWASD( const bool keyDown[256] );

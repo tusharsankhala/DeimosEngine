@@ -21,6 +21,7 @@ namespace Engine_VK
 		virtual void OnRender()						= 0;
 		virtual bool OnEvent( MSG msg)				= 0;
 		virtual void OnResize( bool resizeRender )	= 0;
+		virtual void OnUpdateDisplay()				= 0;
 
 		// Device & swapchain management
 		void DeviceInit( HWND WindowsHandle );
@@ -45,12 +46,13 @@ namespace Engine_VK
 
 		// Swapchain management.
 		SwapChain					m_swapChain;
-		bool						m_vSyncEnabled;
+		bool						m_vsyncEnabled;
 		PresentationMode			m_fullscreenMode;
 		PresentationMode			m_previousFullscreenMode;
 
 		// Display management.
 		HMONITOR					m_monitor;
+		bool						m_freesyncHDROptionEnabled;
 		DisplayMode					m_previousDisplayModeNamesIndex;
 		DisplayMode					m_currentDisplayModeNamesIndex;
 		std::vector<DisplayMode>	m_displayModesAvailable;

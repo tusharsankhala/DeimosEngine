@@ -1,4 +1,4 @@
-
+#include "VK/Common/stdafx.h"
 #include "InstanceProperties.h"
 #include "Common/Misc/Misc.h"
 

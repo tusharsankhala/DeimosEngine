@@ -6,7 +6,7 @@
 namespace Engine_VK
 {
 	bool ExtDebugReportCheckInstanceExtensions( InstanceProperties* pIP, bool gpuValidation );
-	bool ExtDebugReportGetProcAddresses( VkInstance instance );
+	void ExtDebugReportGetProcAddresses( VkInstance instance );
 
 	void ExtDebugReportOnCreate( VkInstance instance );
 	void ExtDebugReportOnDestroy( VkInstance instance );

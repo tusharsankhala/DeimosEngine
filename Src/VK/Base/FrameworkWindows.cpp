@@ -9,13 +9,22 @@ LRESULT CALLBACK WindowProc( HWND hWnd,
                              WPARAM wParam,
                              LPARAM lParam );
 
-static const char* const WINDOW_CLASS_NAME = "DeimosEngine";
-static FrameworkWindows* pFrameworkInstance		= nullptr;
-static bool bIsMinimised = false;
+static const char* const WINDOW_CLASS_NAME  = "DeimosEngine";
+static FrameworkWindows* pFrameworkInstance	= nullptr;
+static bool bIsMinimised                    = false;
 static RECT m_windowRect;
-static LONG lBorderedStyle = 0;
-static LONG lBorderlessStyle = 0;
-static UINT lwindowStyle = 0;
+static LONG lBorderedStyle                  = 0;
+static LONG lBorderlessStyle                = 0;
+static UINT lwindowStyle                    = 0;
+
+// Deafult values for validation layers - applications can override these values in their constructors.
+#if _DEBUG
+static constexpr bool ENABLE_CPU_VALIDATION_DEFAULT  = true;
+static constexpr bool ENABLE_GPU_VALIDATION_DEFAULT = true;
+#else // Release
+static constexpr bool ENABLE_CPU_VALIDATION_DEFAULT = false;
+static constexpr bool ENABLE_GPU_VALIDATION_DEFAULT = false;
+#endif
 
 int RunFramework( HINSTANCE hInstance, LPSTR lpCmdLine, int nCmdShow, FrameworkWindows* pFramework )
 {
@@ -217,12 +226,76 @@ LRESULT CALLBACK WindowProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
+static std::string GetCPUNameString()
+{
+    int nIDs = 0;
+    int nExIDs = 0;
+
+    char strCPUName[0x40] = { };
+
+    std::array<int, 4> cpuInfo;
+    std::vector<std::array<int, 4>> extData;
+
+    __cpuid(cpuInfo.data(), 0);
+
+    // Calling __cpuid with 0x80000000 as the function_id argument
+    // gets the number of the highest valid extended ID.
+    __cpuid(cpuInfo.data(), 0x80000000);
+
+    nExIDs = cpuInfo[0];
+    for (int i = 0x80000000; i <= nExIDs; ++i)
+    {
+        __cpuidex(cpuInfo.data(), i, 0);
+        extData.push_back(cpuInfo);
+    }
+
+    // Interpret CPU strCPUName string if reported
+    if (nExIDs >= 0x80000004)
+    {
+        memcpy(strCPUName, extData[2].data(), sizeof(cpuInfo));
+        memcpy(strCPUName + 16, extData[3].data(), sizeof(cpuInfo));
+        memcpy(strCPUName + 32, extData[4].data(), sizeof(cpuInfo));
+    }
+
+    return strlen(strCPUName) != 0 ? strCPUName : "UNAVAILABLE";
+}
+
 namespace Engine_VK
 {
 	FrameworkWindows::FrameworkWindows( LPCSTR name )
-	{
+        : m_name(name)
+        , m_width(0)
+        , m_height(0)
 
-	}
+        // Simulation management
+        , m_lastFrameTime(MillisecondsNow())
+        , m_deltaTime(0.0)
+
+        // Device management
+        , m_windowHwnd(NULL)
+        , m_device()
+        , m_stablePowerState(false)
+        , m_isCpuValidationLayerEnabled( ENABLE_CPU_VALIDATION_DEFAULT )
+        , m_isGpuValidationLayerEnabled( ENABLE_GPU_VALIDATION_DEFAULT )
+
+        // Swapchain management
+        , m_swapChain()
+        , m_vsyncEnabled(false)
+        , m_fullscreenMode(PRESENTATIONMODE_WINDOWED)
+        , m_previousFullscreenMode(PRESENTATIONMODE_WINDOWED)
+
+        // Display management
+        , m_monitor()
+        , m_freesyncHDROptionEnabled(false)
+        , m_previousDisplayModeNamesIndex(DISPLAYMODE_SDR)
+        , m_currentDisplayModeNamesIndex(DISPLAYMODE_SDR)
+        , m_displayModesAvailable()
+        , m_displayModesNamesAvailable()
+        , m_enableLocalDimming(true)
+
+        // System info
+        , m_systemInfo() // initialized after device
+	{}
 
     void FrameworkWindows::DeviceInit( HWND windowsHandle )
     {
@@ -250,7 +323,9 @@ namespace Engine_VK
 
         // Get the system info.
         std::string dummyStr;
-        m_device.getDevice
+        m_device.GetDeviceInfo( &m_systemInfo.mGPUName, &dummyStr );    // 2nd parameter is unused.
+        m_systemInfo.mCPUName = GetCPUNameString();
+        m_systemInfo.mGfxAPI = "Vulkan";
     }
 
     void FrameworkWindows::DeviceShutdown()
@@ -262,9 +337,8 @@ namespace Engine_VK
         m_swapChain.OnDestroyWindowSizeDependentResources();
         m_swapChain.OnDestroy();
 
-        m_device.DestoryPipelineCache();
+        m_device.DestroyPipelineCache();
         m_device.OnDestroy();
-
     }
 
     // BeginFrame will handle time updates and other start of frame logic needed
@@ -279,7 +353,7 @@ namespace Engine_VK
     // EndFrame will handle Present and other end of frame logic needed
     void FrameworkWindows::EndFrame()
     {
-        VkResult res;
+        VkResult res = m_swapChain.Present();
 
         // *********************************************************************************
         // Edge case for handling Fullscreen Exclusive (FSE) mode
@@ -405,9 +479,38 @@ namespace Engine_VK
 
     void FrameworkWindows::OnActivate( bool windowActive )
     {
+        // *********************************************************************************
+        // Edge case for handling Fullscreen Exclusive (FSE) mode 
+        // FSE<->FSB transitions are handled here and at the end of EndFrame().
+        if( windowActive && 
+            m_windowHwnd == GetForegroundWindow() &&
+            m_fullscreenMode == PRESENTATIONMODE_BORDERLESS_FULLSCREEN &&
+            m_previousFullscreenMode == PRESENTATIONMODE_EXCLUSIVE_FULLSCREEN )
+        {
+            m_fullscreenMode = PRESENTATIONMODE_EXCLUSIVE_FULLSCREEN;
+            m_previousFullscreenMode = PRESENTATIONMODE_BORDERLESS_FULLSCREEN;
+            HandleFullScreen();
+            m_previousFullscreenMode = m_fullscreenMode;
+        }
+        // *********************************************************************************
         
+        if ( m_displayModesAvailable[ m_currentDisplayModeNamesIndex ] == DisplayMode::DISPLAYMODE_SDR &&
+                m_displayModesAvailable[ m_previousDisplayModeNamesIndex ] == DISPLAYMODE_SDR)
+            return;
 
-      
+        if( CheckIfWindowModeHdrOn() &&
+            ( m_displayModesAvailable[ m_currentDisplayModeNamesIndex ] == DISPLAYMODE_HDR10_2048 || 
+                m_displayModesAvailable[ m_currentDisplayModeNamesIndex ] == DISPLAYMODE_HDR10_SCRGB ))
+            return;
+
+        // Fall back HDR to SDR when window is fullscreen but not the active window or foreground window
+        DisplayMode old = m_currentDisplayModeNamesIndex;
+        m_currentDisplayModeNamesIndex = windowActive && ( m_fullscreenMode != PRESENTATIONMODE_WINDOWED ) ? m_previousDisplayModeNamesIndex : DisplayMode::DISPLAYMODE_SDR;
+        if( old != m_currentDisplayModeNamesIndex )
+        {
+            UpdateDisplay();
+            OnResize( true );
+        }
     }
 
     void FrameworkWindows::UpdateDisplay()
@@ -424,7 +527,7 @@ namespace Engine_VK
 
         m_swapChain.OnDestroyWindowSizeDependentResources();
 
-        m_swapChain.OnCreateWindowSizeDependentResources( m_width, m_height, m_vSyncEnabled, m_displayModesAvailable[ m_currentDisplayModeNamesIndex],
+        m_swapChain.OnCreateWindowSizeDependentResources( m_width, m_height, m_vsyncEnabled, m_displayModesAvailable[ m_currentDisplayModeNamesIndex],
                                                            m_fullscreenMode, m_enableLocalDimming );
     }
 

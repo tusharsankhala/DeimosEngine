@@ -16,7 +16,6 @@
 #include <wrl.h>
 #include <KnownFolders.h>
 #include <shlobj.h>
-#include <cstdarg>
 
 // C RunTime Header Files
 #include <malloc.h>
@@ -39,21 +38,6 @@ using namespace DirectX;
 #include <limits>
 #include <algorithm>
 #include <mutex>
-
-#include "Common/Base/ImGuiHelper.h"
-#include "VK/Base/Device.h"
-#include "VK/Base/Helper.h"
-#include "VK/Base/Texture.h"
-#include "VK/Base/ResourceViewHeaps.h"
-#include "VK/Base/SwapChain.h"
-#include "VK/Base/CommandListRing.h"
-#include "VK/Base/StaticBufferPool.h"
-#include "VK/Base/DynamicBufferRing.h"
-#include "VK/Base/GBuffer.h"
-#include "VK/Base/GPUTimestamps.h"
-#include "VK/Base/UploadHeap.h"
-
-using namespace Engine_VK;
 
 //#include <Shellapi.h> 
 

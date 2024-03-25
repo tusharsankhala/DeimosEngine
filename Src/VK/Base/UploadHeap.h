@@ -1,6 +1,7 @@
 #pragma once
 
 #include "VK/Base/Device.h"
+#include "Common/Misc/Async.h"
 
 namespace Engine_VK
 {
@@ -12,6 +13,7 @@ namespace Engine_VK
 
 	class UploadHeap
 	{
+		Sync allocating, flushing;
 		struct COPY
 		{
 			VkImage							m_image;
@@ -26,14 +28,26 @@ namespace Engine_VK
 		std::mutex							m_mutex;
 
 	public:
-		void OnCreate( Device* pDevice, SIZE_T uSize );
-		void OnDestroy();
+		void			OnCreate( Device* pDevice, SIZE_T uSize );
+		void			OnDestroy();
+
+		UINT8*			Suballocate( SIZE_T uSize, UINT64 uAlign );
+		UINT8*			BeginSuballocate( SIZE_T uSize, UINT64 uAlign );
+		void			EndSuballocate();
+		UINT8*			BasePtr() { return m_pDataBegin; }
+		VkBuffer		GetResource() { return m_buffer; }
+		VkCommandBuffer	GetCommandList() { return m_commandBuffer; }
+
+		void			Flush();
+		void			FlushAndFinish( bool bDoBarriers = false );
+
+
 	private:
 
 		Device*								m_pDevice;
 
 		VkCommandPool						m_commandPool;
-		VkCommandBuffer						m_pCommandBuffer;
+		VkCommandBuffer						m_commandBuffer;
 
 		VkBuffer							m_buffer;
 		VkDeviceMemory						m_deviceMemory;

@@ -88,6 +88,15 @@
     <Filter Include="Source Files\Common\ShaderCompiler">
       <UniqueIdentifier>{44762bb4-a59a-4e50-9352-0c20870deebe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\VK\PostProcess">
+      <UniqueIdentifier>{cdefb9fa-3363-475d-a99c-bad709311885}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VK\PostProcess">
+      <UniqueIdentifier>{0bd09dff-4298-4071-8959-69a1b83c494c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\VK\Common">
+      <UniqueIdentifier>{51347ece-2b5c-49fc-925c-8f4f9e9092d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\main.cpp">
@@ -197,6 +206,36 @@
     </ClCompile>
     <ClCompile Include="..\Src\VK\Extensions\ExtValidation.cpp">
       <Filter>Source Files\VK\Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Extensions\ExtFp16.cpp">
+      <Filter>Source Files\VK\Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Extensions\ExtRayTracing.cpp">
+      <Filter>Source Files\VK\Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Extensions\ExtVRS.cpp">
+      <Filter>Source Files\VK\Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\PostProcess\MagnifierPS.cpp">
+      <Filter>Source Files\VK\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\PostProcess\PostProcCS.cpp">
+      <Filter>Source Files\VK\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\PostProcess\PostProcPS.cpp">
+      <Filter>Source Files\VK\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\ImGuiBackend.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\Misc\DxgiFormatHelper.cpp">
+      <Filter>Source Files\Common\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\Misc\Async.cpp">
+      <Filter>Source Files\Common\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\Misc\ThreadPool.cpp">
+      <Filter>Source Files\Common\Misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -310,6 +349,42 @@
     </ClInclude>
     <ClInclude Include="..\Src\VK\Extensions\ExtValidation.h">
       <Filter>Header Files\VK\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Extensions\ExtFp16.h">
+      <Filter>Header Files\VK\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Extensions\ExtVRS.h">
+      <Filter>Header Files\VK\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Extensions\ExtRayTracing.h">
+      <Filter>Header Files\VK\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\PostProcess\MagnifierPS.h">
+      <Filter>Header Files\VK\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\PostProcess\PostProcCS.h">
+      <Filter>Header Files\VK\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\PostProcess\PostProcPS.h">
+      <Filter>Header Files\VK\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Common\stdafx.h">
+      <Filter>Header Files\VK\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\ImGuiBackend.h">
+      <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Misc\DxgiFormatHelper.h">
+      <Filter>Header Files\Common\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Misc\Async.h">
+      <Filter>Header Files\Common\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Misc\ThreadPool.h">
+      <Filter>Header Files\Common\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Misc\AsyncCache.h">
+      <Filter>Header Files\Common\Misc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

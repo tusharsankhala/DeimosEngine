@@ -1,4 +1,4 @@
-#include "Common/stdafx.h"
+#include "VK/Common/stdafx.h"
 
 #include "Application.h"
 
@@ -22,7 +22,7 @@ void Application::OnParseCommandLine(LPSTR lpCmdLine, uint32_t* pWidth, uint32_t
 	*pHeight			= 1080;
 	m_activeScene		= 0;			// Load the first one by default.
 	m_bIsBenchmarking	= false;
-	m_vSyncEnabled		= false;
+	m_vsyncEnabled		= false;
 	m_fontSize			= 13.f;
 	m_activeCamera		= 0;
 }

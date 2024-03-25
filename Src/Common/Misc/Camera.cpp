@@ -69,7 +69,7 @@ void Camera::LookAt( float yaw, float pitch, float distance, const math::Vector4
 
 void Camera::UpdateCameraPolar( float yaw, float pitch, float x, float y, float distance )
 {
-	pitch = std::max( -XM_PIDIV2 + 1e-3f, std::min( pitch, XM_PIDIV2 - 1e-3f );
+	pitch = std::max( -XM_PIDIV2 + 1e-3f, std::min( pitch, XM_PIDIV2 - 1e-3f ) );
 
 	// Trucks camera, moves the camera parallel to the view plane.
 	m_eyePos +=  GetSide() * x * distance / 10.0f;
@@ -114,7 +114,7 @@ void Camera::SetProjectionJitter( uint32_t width, uint32_t height, uint32_t& sam
 		{
 			f /= static_cast<float>( base );
 			result = result + f * static_cast<float>( i % base );
-			i = static_cast<uint32_t>( floorf( static_cast<float>(i) / floorf(static_cast<float>(base) ) );
+			i = static_cast<uint32_t>( floorf( static_cast<float>(i) / static_cast<float>(base) ) );
 		}
 
 		return result;

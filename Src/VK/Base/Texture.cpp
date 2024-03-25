@@ -2,6 +2,7 @@
 #include "VK/Base/ResourceViewHeaps.h"
 #include "VK/Base/Texture.h"
 #include "Common/Misc/Misc.h"
+#include "Common/Misc/DxgiFormatHelper.h"
 #include "VK/Extensions/ExtDebugUtils.h"
 
 namespace Engine_VK
@@ -100,7 +101,7 @@ namespace Engine_VK
     }
 
     INT32 Texture::InitRenderTarget( Device* pDevice, uint32_t width, uint32_t height, VkFormat format, VkSampleCountFlagBits msaa,
-        VkImageUsageFlags usage, bool bUAV, const char* name = nullptr, VkImageCreateFlagBits flags )
+        VkImageUsageFlags usage, bool bUAV, const char* name, VkImageCreateFlagBits flags )
     {
         VkImageCreateInfo image_info = {};
         image_info.sType                    = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -309,9 +310,83 @@ namespace Engine_VK
         return result;
     }
 
-    bool Texture::InitFromData( Device* pDevice, UploadHeap& pUploadHeap, const char* szFilename, bool useSRGB, VkImageUsageFlags usageFlag, float cutOff )
+    //--------------------------------------------------------------------------------------
+    // entry function to initialize an image from a .DDS texture
+    //--------------------------------------------------------------------------------------
+    bool Texture::InitFromData( Device* pDevice, UploadHeap& uploadHeap, const IMG_INFO& header, const void* data, const char* name ) 
     {
+        assert( !m_pResource && !m_pDevice );
+        assert( header.arraySize == 1 && header.mipMapCount == 1 );
 
+        m_pDevice = pDevice;
+        m_header = header;
+        
+        m_pResource = CreateTextureCommitted( m_pDevice, &uploadHeap, name, false );
+
+        // Upload Image.
+        {
+            VkImageMemoryBarrier copy_barrier = {};
+            copy_barrier.sType                          = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+            copy_barrier.dstAccessMask                  = VK_ACCESS_TRANSFER_WRITE_BIT;
+            copy_barrier.oldLayout                      = VK_IMAGE_LAYOUT_UNDEFINED;
+            copy_barrier.newLayout                      = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            copy_barrier.srcQueueFamilyIndex            = VK_QUEUE_FAMILY_IGNORED;
+            copy_barrier.dstQueueFamilyIndex            = VK_QUEUE_FAMILY_IGNORED;
+            copy_barrier.image                          = m_pResource;
+            copy_barrier.subresourceRange.aspectMask    = VK_IMAGE_ASPECT_COLOR_BIT;
+            copy_barrier.subresourceRange.baseMipLevel  = 0;
+            copy_barrier.subresourceRange.levelCount    = m_header.mipMapCount;
+            copy_barrier.subresourceRange.layerCount    = m_header.arraySize;
+            vkCmdPipelineBarrier( uploadHeap.GetCommandList(), VK_PIPELINE_STAGE_HOST_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, NULL, 0, NULL, 1, &copy_barrier );
+        }
+
+        // compute pixel size.
+        //
+        UINT32 bytePP = m_header.bitCount / 8;
+        if (( m_header.format >= DXGI_FORMAT_BC1_TYPELESS ) && ( m_header.format <= DXGI_FORMAT_BC5_SNORM ) )
+        {
+            bytePP = (UINT32)GetPixelByteSize(( DXGI_FORMAT) m_header.format );
+        }
+
+        UINT8*  pixels = NULL;
+        UINT64 uploadHeapSize = m_header.width * m_header.height * 4;
+        pixels = uploadHeap.Suballocate( uploadHeapSize, 512 );
+        assert( pixels != NULL );
+
+        CopyMemory( pixels, data, m_header.width * m_header.height * bytePP );
+
+        VkBufferImageCopy region = {};
+        region.bufferOffset = 0;
+        region.imageSubresource.aspectMask      = VK_IMAGE_ASPECT_COLOR_BIT;
+        region.imageSubresource.layerCount      = 1;
+        region.imageSubresource.baseArrayLayer  = 0;
+        region.imageSubresource.mipLevel        = 0;
+        region.imageExtent.width                = m_header.width;
+        region.imageExtent.height               = m_header.height;
+        region.imageExtent.depth                = 1;
+        vkCmdCopyBufferToImage( uploadHeap.GetCommandList(), uploadHeap.GetResource(), m_pResource, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region );
+
+        // Prepare to shader read.
+        //
+        {
+            VkImageMemoryBarrier use_barrier = {};
+            use_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+            use_barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+            use_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+            use_barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            use_barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            use_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+            use_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+            use_barrier.image = m_pResource;
+            use_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            use_barrier.subresourceRange.levelCount = m_header.mipMapCount;
+            use_barrier.subresourceRange.layerCount = m_header.arraySize;
+            vkCmdPipelineBarrier( uploadHeap.GetCommandList(), VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                  VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                                  0, 0, NULL, 0, NULL, 1, &use_barrier);
+        }
+
+        return true;
     }
 
     VkFormat TranslateDxgiFormatIntoVulkans( DXGI_FORMAT format )

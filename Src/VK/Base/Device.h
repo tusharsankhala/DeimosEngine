@@ -21,7 +21,7 @@ namespace Engine_VK
 		~Device();
 
 		void								OnCreate( const char* pAppName, const char* pEngineName, bool cpuValidationLayerEnabled, bool gpuValidationLayerEnabled, HWND hWnd );
-		void								SetEssentialInstanceExtensions( bool cpuValidationLayerEnabled, bool gpuValidationLayerEnabled, InstanceProperties *pIp );
+		void								SetEssentialInstanceExtensions( bool cpuValidationLayerEnabled, bool gpuValidationLayerEnabled, InstanceProperties* pIp );
 		void								SetEssentialDeviceExtensions( DeviceProperties* pDp);
 		void								OnCreateEx( VkInstance vulkanInstance, VkPhysicalDevice physicalDevice, HWND hWnd, DeviceProperties *pDp );
 		void								OnDestroy();

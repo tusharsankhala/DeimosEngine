@@ -1,4 +1,8 @@
 #include "Common/stdafx.h"
+#include <vulkan/vulkan_win32.h>
+#include "VK/Base/Instance.h"
+#include "VK/Base/InstanceProperties.h"
+#include "VK/Base/DeviceProperties.h"
 #include "ExtValidation.h"
 
 namespace Engine_VK
@@ -50,7 +54,7 @@ namespace Engine_VK
 		return s_bCanUseDebugReport;
 	}
 
-	bool ExtDebugReportGetProcAddresses( VkInstance instance )
+	void ExtDebugReportGetProcAddresses( VkInstance instance )
 	{
 		if( s_bCanUseDebugReport )
 		{

@@ -24,10 +24,13 @@
     <ClCompile Include="..\Src\Common\Base\Benchmark.cpp" />
     <ClCompile Include="..\Src\Common\Base\ImGuiHelper.cpp" />
     <ClCompile Include="..\Src\Common\GLTF\GltfCommon.cpp" />
+    <ClCompile Include="..\Src\Common\Misc\Async.cpp" />
     <ClCompile Include="..\Src\Common\Misc\Camera.cpp" />
     <ClCompile Include="..\Src\Common\Misc\DDSLoader.cpp" />
+    <ClCompile Include="..\Src\Common\Misc\DxgiFormatHelper.cpp" />
     <ClCompile Include="..\Src\Common\Misc\ImgLoader.cpp" />
     <ClCompile Include="..\Src\Common\Misc\Misc.cpp" />
+    <ClCompile Include="..\Src\Common\Misc\ThreadPool.cpp" />
     <ClCompile Include="..\Src\Common\Misc\WICLoader.cpp" />
     <ClCompile Include="..\Src\Common\ShaderCompiler\DXCHelper.cpp" />
     <ClCompile Include="..\Src\Common\ShaderCompiler\ShaderCompiler.cpp" />
@@ -43,6 +46,7 @@
     <ClCompile Include="..\Src\VK\Base\GBuffer.cpp" />
     <ClCompile Include="..\Src\VK\Base\GPUTimstamps.cpp" />
     <ClCompile Include="..\Src\VK\Base\Helper.cpp" />
+    <ClCompile Include="..\Src\VK\Base\ImGuiBackend.cpp" />
     <ClCompile Include="..\Src\VK\Base\Instance.cpp" />
     <ClCompile Include="..\Src\VK\Base\InstanceProperties.cpp" />
     <ClCompile Include="..\Src\VK\Base\ResourceViewHeaps.cpp" />
@@ -52,8 +56,14 @@
     <ClCompile Include="..\Src\VK\Base\Texture.cpp" />
     <ClCompile Include="..\Src\VK\Base\UploadHeap.cpp" />
     <ClCompile Include="..\Src\VK\Extensions\ExtDebugUtils.cpp" />
+    <ClCompile Include="..\Src\VK\Extensions\ExtFp16.cpp" />
     <ClCompile Include="..\Src\VK\Extensions\ExtFreeSyncHDR.cpp" />
+    <ClCompile Include="..\Src\VK\Extensions\ExtRayTracing.cpp" />
     <ClCompile Include="..\Src\VK\Extensions\ExtValidation.cpp" />
+    <ClCompile Include="..\Src\VK\Extensions\ExtVRS.cpp" />
+    <ClCompile Include="..\Src\VK\PostProcess\MagnifierPS.cpp" />
+    <ClCompile Include="..\Src\VK\PostProcess\PostProcCS.cpp" />
+    <ClCompile Include="..\Src\VK\PostProcess\PostProcPS.cpp" />
     <ClCompile Include="..\Src\VK\Renderer\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -61,12 +71,16 @@
     <ClInclude Include="..\Src\Common\Base\Benchmark.h" />
     <ClInclude Include="..\Src\Common\Base\ImGuiHelper.h" />
     <ClInclude Include="..\Src\Common\GLTF\GltfCommon.h" />
+    <ClInclude Include="..\Src\Common\Misc\Async.h" />
+    <ClInclude Include="..\Src\Common\Misc\AsyncCache.h" />
     <ClInclude Include="..\Src\Common\Misc\Camera.h" />
     <ClInclude Include="..\Src\Common\Misc\DDSLoader.h" />
+    <ClInclude Include="..\Src\Common\Misc\DxgiFormatHelper.h" />
     <ClInclude Include="..\Src\Common\Misc\Hash.h" />
     <ClInclude Include="..\Src\Common\Misc\ImgLoader.h" />
     <ClInclude Include="..\Src\Common\Misc\Misc.h" />
     <ClInclude Include="..\Src\Common\Misc\Ring.h" />
+    <ClInclude Include="..\Src\Common\Misc\ThreadPool.h" />
     <ClInclude Include="..\Src\Common\Misc\WICLoader.h" />
     <ClInclude Include="..\Src\Common\ShaderCompiler\DXCHelper.h" />
     <ClInclude Include="..\Src\Common\ShaderCompiler\ShaderCompiler.h" />
@@ -82,6 +96,7 @@
     <ClInclude Include="..\Src\VK\Base\GBuffer.h" />
     <ClInclude Include="..\Src\VK\Base\GPUTimestamps.h" />
     <ClInclude Include="..\Src\VK\Base\Helper.h" />
+    <ClInclude Include="..\Src\VK\Base\ImGuiBackend.h" />
     <ClInclude Include="..\Src\VK\Base\Instance.h" />
     <ClInclude Include="..\Src\VK\Base\InstanceProperties.h" />
     <ClInclude Include="..\Src\VK\Base\ResourceViewHeaps.h" />
@@ -90,9 +105,16 @@
     <ClInclude Include="..\Src\VK\Base\SwapChain.h" />
     <ClInclude Include="..\Src\VK\Base\Texture.h" />
     <ClInclude Include="..\Src\VK\Base\UploadHeap.h" />
+    <ClInclude Include="..\Src\VK\Common\stdafx.h" />
     <ClInclude Include="..\Src\VK\Extensions\ExtDebugUtils.h" />
+    <ClInclude Include="..\Src\VK\Extensions\ExtFp16.h" />
     <ClInclude Include="..\Src\VK\Extensions\ExtFreeSyncHDR.h" />
+    <ClInclude Include="..\Src\VK\Extensions\ExtRayTracing.h" />
     <ClInclude Include="..\Src\VK\Extensions\ExtValidation.h" />
+    <ClInclude Include="..\Src\VK\Extensions\ExtVRS.h" />
+    <ClInclude Include="..\Src\VK\PostProcess\MagnifierPS.h" />
+    <ClInclude Include="..\Src\VK\PostProcess\PostProcCS.h" />
+    <ClInclude Include="..\Src\VK\PostProcess\PostProcPS.h" />
     <ClInclude Include="..\Src\VK\Renderer\Renderer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
