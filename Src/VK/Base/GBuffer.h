@@ -31,7 +31,7 @@ namespace Engine_VK
 		void						OnCreate( GBuffer* pBuffer, GBufferFlags flags, bool bClear, const std::string& name );
 		void						OnDestroy();
 		void						OnCreateWindowSizeDependentResources( uint32_t width, uint32_t height );
-		void						OnDestoryWindowSizeDependentResources();
+		void						OnDestroyWindowSizeDependentResources();
 		void						BeginPass( VkCommandBuffer commandList, VkRect2D renderArea );
 		void						EndPass( VkCommandBuffer commandList );
 		void						GetCompilerDefines( DefineList& defines );

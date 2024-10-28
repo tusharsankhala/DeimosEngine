@@ -10,3 +10,12 @@
 #include <cassert>
 #include <fstream>
 #include <sstream>
+
+
+namespace Engine_VK
+{
+	void MagnifierPS::UpdatePipelines(VkRenderPass renderPass)
+	{
+		m_shaderMagnify.UpdatePipeline(renderPass, NULL, VK_SAMPLE_COUNT_1_BIT);
+	}
+}

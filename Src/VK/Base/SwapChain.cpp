@@ -19,7 +19,7 @@ namespace Engine_VK
 		m_pDevice				= pDevice;
 		m_backbufferCount		= numberBackBuffers;
 		m_semaphoreIndex		= 0;
-		m_prevSemaphoreCount	= 0;
+		m_prevSemaphoreIndex	= 0;
 
 		m_presentQueue			= pDevice->GetPresentQueue();
 
@@ -106,6 +106,34 @@ namespace Engine_VK
 		return std::find( displayModesAvailable.begin(), displayModesAvailable.end(), displayMode ) != displayModesAvailable.end();
 	}
 
+	VkImage	SwapChain::GetCurrentBackBuffer()
+	{
+		return m_images[m_imageIndex];
+	}
+
+	VkImageView SwapChain::GetCurrentBackBufferRTV()
+	{
+		return m_imageViews[m_imageIndex];
+	}
+
+	uint32_t SwapChain::WaitForSwapChain()
+	{
+		vkAcquireNextImageKHR(m_pDevice->GetDevice(), m_swapChain, UINT64_MAX, m_imageAvailableSemaphores[m_semaphoreIndex],
+			VK_NULL_HANDLE, &m_imageIndex);
+
+		m_prevSemaphoreIndex = m_semaphoreIndex;
+		m_semaphoreIndex++;
+
+		if (m_semaphoreIndex >= m_backbufferCount)
+		{
+			m_semaphoreIndex = 0;
+		}
+
+		vkWaitForFences(m_pDevice->GetDevice(), 1, &m_cmdBufExecutedFences[m_prevSemaphoreIndex], VK_TRUE, UINT64_MAX);
+		vkResetFences(m_pDevice->GetDevice(), 1, &m_cmdBufExecutedFences[m_prevSemaphoreIndex]);
+	
+		return m_imageIndex;
+	}
 
 	VkResult SwapChain::Present()
 	{
@@ -181,7 +209,6 @@ namespace Engine_VK
 		}
 	}
 
-
 	void SwapChain::CreateRenderPass()
 	{
 		// Color RT.
@@ -240,10 +267,5 @@ namespace Engine_VK
 			vkDestroyRenderPass( m_pDevice->GetDevice(), m_render_pass_swap_chain, nullptr );
 			m_render_pass_swap_chain = VK_NULL_HANDLE;
 		}
-	}
-
-	bool ExtAreFSEExtensionsPresent()
-	{
-		return s_isFSEDeviceExtensionsPresent;
 	}
 }

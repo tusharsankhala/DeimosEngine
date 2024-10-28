@@ -42,6 +42,153 @@ private:
 };
 
 //
+//  Reads a file into a buffer
+//
+bool ReadFile(const char* name, char** data, size_t* size, bool isbinary)
+{
+	FILE* file;
+
+	// Open file.
+	if (fopen_s(&file, name, isbinary ? "rb" : "r") != 0)
+	{
+		return false;
+	}
+
+	// Get file length.
+	fseek(file, 0, SEEK_END);
+	size_t fileLen = ftell(file);
+	fseek(file, 0, SEEK_SET);
+
+	// If ascii add one more char to accomodate for the \0
+	if (!isbinary)
+	{
+		fileLen++;
+	}
+
+	// Allocate memory
+	char* buffer = (char*)malloc(std::max<size_t>(fileLen, 1));
+	if (!buffer)
+	{
+		fclose(file);
+		return false;
+	}
+
+	// Read file contents into buffer.
+	size_t bytesRead = 0;
+	if (fileLen > 0)
+	{
+		bytesRead = fread(buffer, 1, fileLen, file);
+	}
+	fclose(file);
+
+	if (!isbinary)
+	{
+		buffer[bytesRead] = 0;
+		fileLen = bytesRead;
+	}
+
+	*data = buffer;
+	if (size != NULL)
+		*size = fileLen;
+
+	return true;
+}
+
+bool SaveFile(const char* name, void const* data, size_t size, bool isbinary)
+{
+	FILE* file;
+
+	// Open file.
+	if (fopen_s(&file, name, isbinary ? "wb" : "w") == 0)
+	{
+		fwrite(data, size, 1, file);
+		fclose(file);
+		return true;
+	}
+
+	return true;
+}
+
+//
+// Launch a process, captures stderr into a file
+//
+bool LaunchProcess(const char* commandLine, const char* filenameErr)
+{
+	char cmdLine[1024];
+	strcpy_s<1024>(cmdLine, commandLine);
+
+	// create a pipe to get possible errors from the process
+	//
+	HANDLE g_hChildStd_OUT_Rd = NULL;
+	HANDLE g_hChildStd_OUT_Wr = NULL;
+
+	SECURITY_ATTRIBUTES saAttr;
+	saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
+	saAttr.bInheritHandle = TRUE;
+	saAttr.lpSecurityDescriptor = NULL;
+	if (!CreatePipe(&g_hChildStd_OUT_Rd, &g_hChildStd_OUT_Wr, &saAttr, 0))
+		return false;
+
+	// launch process
+	//
+	PROCESS_INFORMATION pi = {};
+	STARTUPINFOA si = {};
+	si.cb = sizeof(si);
+	si.dwFlags = STARTF_USESTDHANDLES;
+	si.hStdError = g_hChildStd_OUT_Wr;
+	si.hStdOutput = g_hChildStd_OUT_Wr;
+	si.wShowWindow = SW_HIDE;
+
+	if (CreateProcessA(NULL, cmdLine, NULL, NULL, TRUE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi))
+	{
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		CloseHandle(g_hChildStd_OUT_Wr);
+
+		ULONG rc;
+		if (GetExitCodeProcess(pi.hProcess, &rc))
+		{
+			if (rc == 0)
+			{
+				DeleteFileA(filenameErr);
+				return true;
+			}
+			else
+			{
+				Trace(format("*** Process %s returned an error, see %s ***\n\n", commandLine, filenameErr));
+
+				// save errors to disk
+				std::ofstream ofs(filenameErr, std::ofstream::out);
+
+				for (;;)
+				{
+					DWORD dwRead;
+					char chBuf[2049];
+					BOOL bSuccess = ReadFile(g_hChildStd_OUT_Rd, chBuf, 2048, &dwRead, NULL);
+					chBuf[dwRead] = 0;
+					if (!bSuccess || dwRead == 0) break;
+
+					Trace(chBuf);
+
+					ofs << chBuf;
+				}
+
+				ofs.close();
+			}
+		}
+
+		CloseHandle(g_hChildStd_OUT_Rd);
+		CloseHandle(pi.hProcess);
+		CloseHandle(pi.hThread);
+	}
+	else
+	{
+		Trace(format("*** Can't launch: %s \n", commandLine));
+	}
+
+	return false;
+}
+
+//
 // Formats a string.
 //
 
@@ -98,6 +245,8 @@ void OverlappedCompletionRoutine( DWORD dwErrorCode, DWORD dwNumberOfBytesTransf
 {
 	// We never go into an alert state, so this is just to compile
 }
+
+Log* Log::m_pLogInstance = nullptr;
 
 int Log::InitLogSystem()
 {

@@ -85,7 +85,7 @@ public:
 		m_mem.Create( memTotalSize );
 	}
 
-	void OnDestroy( uint32_t numberOfbackBuffers, uint32_t memTotalSize )
+	void OnDestroy( )
 	{
 		m_mem.Free( m_mem.GetSize() );
 	}

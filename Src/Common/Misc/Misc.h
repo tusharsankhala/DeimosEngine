@@ -8,8 +8,13 @@ static constexpr float PI_OVER_4	= 0.78539816339744830961566084581988f;
 
 double MillisecondsNow();
 std::string format( const char* format, ... );
+bool ReadFile(const char* name, char** data, size_t* size, bool isbinary);
+bool SaveFile(const char* name, void const* data, size_t size, bool isbinary);
 void Trace( const std::string& str );
 void Trace( const char* pFormat, ... );
+bool LaunchProcess(const char* commandLine, const char* filenameErr);
+
+
 
 template<typename T> inline T AlignUp( T val, T alignment )
 {

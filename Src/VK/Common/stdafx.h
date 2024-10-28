@@ -22,6 +22,7 @@
 #include <vectormath/vectormath.hpp>
 
 // TODO: reference additional headers your program requires here
+#include "VK/Base/Imgui.h"
 #include "Common/Base/ImGuiHelper.h"
 #include "VK/Base/Device.h"
 #include "VK/Base/Helper.h"

@@ -2,7 +2,6 @@
 
 #include "DeviceProperties.h"
 #include "InstanceProperties.h"
-#include "FreeSyncHDR.h"
 
 #include <vulkan/vulkan_win32.h>
 

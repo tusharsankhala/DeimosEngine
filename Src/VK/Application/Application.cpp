@@ -1,11 +1,11 @@
 #include "VK/Common/stdafx.h"
-
+#include <intrin.h>
 #include "Application.h"
 
 Application::Application(LPCSTR name) : FrameworkWindows(name)
 {
 	m_time = 0;
-	m_bPlay - true;
+	m_bPlay = true;
 
 	m_pGltfLoader = NULL;
 

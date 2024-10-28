@@ -513,6 +513,32 @@ namespace Engine_VK
         }
     }
 
+    void FrameworkWindows::OnWindowMove()
+    {
+        HMONITOR currentMonitor = MonitorFromWindow(m_windowHwnd, MONITOR_DEFAULTTONEAREST);
+        if (m_monitor != currentMonitor)
+        {
+            m_swapChain.EnumerateDisplayModes(&m_displayModesAvailable, &m_displayModesNamesAvailable);
+            m_monitor = currentMonitor;
+            m_previousDisplayModeNamesIndex = m_currentDisplayModeNamesIndex = DISPLAYMODE_SDR;
+            OnResize(m_width, m_height);
+            UpdateDisplay();
+        }
+    }
+
+    void FrameworkWindows::OnResize(uint32_t width, uint32_t height)
+    {
+        bool fr = (m_width != width || m_height != height);
+        m_width = width;
+        m_height = height;
+        if (fr)
+        {
+            UpdateDisplay();
+            OnResize(true);
+        }
+    }
+
+
     void FrameworkWindows::UpdateDisplay()
     {
         // Nothing has changed in the UI.

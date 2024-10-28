@@ -5,6 +5,7 @@
 #include "VK/Base/GBuffer.h"
 #include "VK/PostProcess/MagnifierPS.h"
 
+
 using namespace Engine_VK;
 
 // We are queuing ( backBufferCount + 0.5) frames, so we need to triple buffer the resource that get modified each frame.
@@ -41,6 +42,12 @@ private:
 	CommandListRing		m_commandListRing;
 	GPUTimestamps		m_gpuTimer;
 
+	// Effects.
+	MagnifierPS			m_magnifierPS;
+
+	// GUI
+	ImGUI				m_ImGUI;
+
 	// GBuffer and Render passes
 	GBuffer				m_gBuffer;
 	GBufferRenderPass	m_renderPassFullGBufferWithClear;
@@ -49,4 +56,6 @@ private:
 
 	// ShadowMaps
 	VkRenderPass		m_renderPass_shadows;
+
+	AsyncPool			m_AsyncPool;
 };

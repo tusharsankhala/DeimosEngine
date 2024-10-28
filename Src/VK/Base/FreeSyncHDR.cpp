@@ -1,8 +1,9 @@
 
 #include "Common/stdafx.h"
-#include <VK/Extensions/ExtFreeSyncHDR.h>
+#include "VK/Extensions/ExtFreeSyncHDR.h"
 #include "FreeSyncHDR.h"
-
+#include "Common/Misc/Misc.h"
+#include "Common/Misc/Error.h"
 #include <vulkan/vulkan.h>
 
 #include <unordered_map>
@@ -221,12 +222,12 @@ namespace Engine_VK
 	{
 		if( fullscreen )
 		{
-			VkResult res = vkAcquireFullScreenExclusiveModeEXT( s_device, swapchain );
+			VkResult res = g_vkAcquireFullScreenExclusiveModeEXT( s_device, swapchain );
 			assert( res == VK_SUCCESS );
 		}
 		else
 		{
-			VkResult res = vkReleaseFullScreenExclusiveModeEXT( s_device, swapchain );
+			VkResult res = g_vkReleaseFullScreenExclusiveModeEXT( s_device, swapchain );
 			assert(res == VK_SUCCESS);
 		}
 	}

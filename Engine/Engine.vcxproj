@@ -19,8 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\External\ImGui\imgui.cpp" />
-    <ClCompile Include="..\External\ImGui\imgui_draw.cpp" />
     <ClCompile Include="..\Src\Common\Base\Benchmark.cpp" />
     <ClCompile Include="..\Src\Common\Base\ImGuiHelper.cpp" />
     <ClCompile Include="..\Src\Common\GLTF\GltfCommon.cpp" />
@@ -28,12 +26,15 @@
     <ClCompile Include="..\Src\Common\Misc\Camera.cpp" />
     <ClCompile Include="..\Src\Common\Misc\DDSLoader.cpp" />
     <ClCompile Include="..\Src\Common\Misc\DxgiFormatHelper.cpp" />
+    <ClCompile Include="..\Src\Common\Misc\Error.cpp" />
+    <ClCompile Include="..\Src\Common\Misc\Hash.cpp" />
     <ClCompile Include="..\Src\Common\Misc\ImgLoader.cpp" />
     <ClCompile Include="..\Src\Common\Misc\Misc.cpp" />
     <ClCompile Include="..\Src\Common\Misc\ThreadPool.cpp" />
     <ClCompile Include="..\Src\Common\Misc\WICLoader.cpp" />
     <ClCompile Include="..\Src\Common\ShaderCompiler\DXCHelper.cpp" />
     <ClCompile Include="..\Src\Common\ShaderCompiler\ShaderCompiler.cpp" />
+    <ClCompile Include="..\Src\Common\ShaderCompiler\ShaderCompilerCache.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
     <ClCompile Include="..\Src\UI\UI.cpp" />
     <ClCompile Include="..\Src\VK\Application\Application.cpp" />
@@ -46,7 +47,7 @@
     <ClCompile Include="..\Src\VK\Base\GBuffer.cpp" />
     <ClCompile Include="..\Src\VK\Base\GPUTimstamps.cpp" />
     <ClCompile Include="..\Src\VK\Base\Helper.cpp" />
-    <ClCompile Include="..\Src\VK\Base\ImGuiBackend.cpp" />
+    <ClCompile Include="..\Src\VK\Base\Imgui.cpp" />
     <ClCompile Include="..\Src\VK\Base\Instance.cpp" />
     <ClCompile Include="..\Src\VK\Base\InstanceProperties.cpp" />
     <ClCompile Include="..\Src\VK\Base\ResourceViewHeaps.cpp" />
@@ -67,7 +68,6 @@
     <ClCompile Include="..\Src\VK\Renderer\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\External\ImGui\imgui.h" />
     <ClInclude Include="..\Src\Common\Base\Benchmark.h" />
     <ClInclude Include="..\Src\Common\Base\ImGuiHelper.h" />
     <ClInclude Include="..\Src\Common\GLTF\GltfCommon.h" />
@@ -76,6 +76,7 @@
     <ClInclude Include="..\Src\Common\Misc\Camera.h" />
     <ClInclude Include="..\Src\Common\Misc\DDSLoader.h" />
     <ClInclude Include="..\Src\Common\Misc\DxgiFormatHelper.h" />
+    <ClInclude Include="..\Src\Common\Misc\Error.h" />
     <ClInclude Include="..\Src\Common\Misc\Hash.h" />
     <ClInclude Include="..\Src\Common\Misc\ImgLoader.h" />
     <ClInclude Include="..\Src\Common\Misc\Misc.h" />
@@ -84,6 +85,7 @@
     <ClInclude Include="..\Src\Common\Misc\WICLoader.h" />
     <ClInclude Include="..\Src\Common\ShaderCompiler\DXCHelper.h" />
     <ClInclude Include="..\Src\Common\ShaderCompiler\ShaderCompiler.h" />
+    <ClInclude Include="..\Src\Common\ShaderCompiler\ShaderCompilerCache.h" />
     <ClInclude Include="..\Src\Common\stdafx.h" />
     <ClInclude Include="..\Src\UI\UI.h" />
     <ClInclude Include="..\Src\VK\Application\Application.h" />
@@ -96,7 +98,7 @@
     <ClInclude Include="..\Src\VK\Base\GBuffer.h" />
     <ClInclude Include="..\Src\VK\Base\GPUTimestamps.h" />
     <ClInclude Include="..\Src\VK\Base\Helper.h" />
-    <ClInclude Include="..\Src\VK\Base\ImGuiBackend.h" />
+    <ClInclude Include="..\Src\VK\Base\Imgui.h" />
     <ClInclude Include="..\Src\VK\Base\Instance.h" />
     <ClInclude Include="..\Src\VK\Base\InstanceProperties.h" />
     <ClInclude Include="..\Src\VK\Base\ResourceViewHeaps.h" />
@@ -140,7 +142,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
+    <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -169,6 +171,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -200,17 +205,27 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>Default</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Src;$(VULKAN_SDK)\Include;$(SolutionDir)External;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
+      <LanguageStandard>Default</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib;$(SolutionDir)External\ImGUI\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;ImGUId.lib;Shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

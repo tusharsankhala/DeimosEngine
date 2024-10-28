@@ -1,6 +1,68 @@
 #include "Common/stdafx.h"
 #include "Common/Base/ImGuiHelper.h"
 
+static HWND g_hWnd;
+
+bool ImGUI_Init(void* hwnd)
+{
+	g_hWnd = (HWND)hwnd;
+
+	ImGuiIO& io = ImGui::GetIO();
+	io.KeyMap[ImGuiKey_Tab] = VK_TAB;                       // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array that we will update during the application lifetime.
+	io.KeyMap[ImGuiKey_LeftArrow] = VK_LEFT;
+	io.KeyMap[ImGuiKey_RightArrow] = VK_RIGHT;
+	io.KeyMap[ImGuiKey_UpArrow] = VK_UP;
+	io.KeyMap[ImGuiKey_DownArrow] = VK_DOWN;
+	io.KeyMap[ImGuiKey_PageUp] = VK_PRIOR;
+	io.KeyMap[ImGuiKey_PageDown] = VK_NEXT;
+	io.KeyMap[ImGuiKey_Home] = VK_HOME;
+	io.KeyMap[ImGuiKey_End] = VK_END;
+	io.KeyMap[ImGuiKey_Delete] = VK_DELETE;
+	io.KeyMap[ImGuiKey_Backspace] = VK_BACK;
+	io.KeyMap[ImGuiKey_Enter] = VK_RETURN;
+	io.KeyMap[ImGuiKey_Escape] = VK_ESCAPE;
+	io.KeyMap[ImGuiKey_A] = 'A';
+	io.KeyMap[ImGuiKey_C] = 'C';
+	io.KeyMap[ImGuiKey_V] = 'V';
+	io.KeyMap[ImGuiKey_X] = 'X';
+	io.KeyMap[ImGuiKey_Y] = 'Y';
+	io.KeyMap[ImGuiKey_Z] = 'Z';
+
+	io.RenderDrawListsFn = NULL;
+	io.ImeWindowHandle = g_hWnd;
+
+	return true;
+}
+
+void ImGUI_Shutdown()
+{
+	ImGui::Shutdown();
+	g_hWnd = NULL;
+}
+
+void ImGUI_UpdateIO()
+{
+	ImGuiIO& io = ImGui::GetIO();
+
+	// Setup display size (every frame to accommodate for window resizing)
+	RECT rect;
+	GetClientRect(g_hWnd, &rect);
+	io.DisplaySize = ImVec2((float)(rect.right - rect.left), (float)(rect.bottom - rect.top));
+
+	// Read keyboard modifiers inputs
+	io.KeyCtrl = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
+	io.KeyShift = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
+	io.KeyAlt = (GetKeyState(VK_MENU) & 0x8000) != 0;
+	io.KeySuper = false;
+	// io.KeysDown : filled by WM_KEYDOWN/WM_KEYUP events
+	// io.MousePos : filled by WM_MOUSEMOVE events
+	// io.MouseDown : filled by WM_*BUTTON* events
+	// io.MouseWheel : filled by WM_MOUSEWHEEL events
+
+	// Hide OS mouse cursor if ImGui is drawing it
+	if (io.MouseDrawCursor)
+		SetCursor(NULL);    // Start the frame
+}
 
 static bool IsAnyMouseButtonDown()
 {

@@ -1,6 +1,24 @@
-#pragma once
+// AMD Cauldron code
+// 
+// Copyright(c) 2017 Advanced Micro Devices, Inc.All rights reserved.
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
-#include "Common/Misc/ThreadPool.h"
+#pragma once
+#include "ThreadPool.h"
 
 // This is a poor's man multithreaded lib. This is how it works:
 //
@@ -13,74 +31,73 @@
 
 class Sync
 {
-	int						m_count = 0;
-	std::mutex				m_mutex;
-	std::condition_variable	condition;
-
+    int m_count = 0;
+    std::mutex m_mutex;
+    std::condition_variable condition;
 public:
-	int Inc()
-	{
-		std::unique_lock<std::mutex> lock( m_mutex );
-		++m_count;
-		return m_count;
-	}
+    int Inc()
+    {
+        std::unique_lock<std::mutex> lock(m_mutex);
+        m_count++;
+        return m_count;
+    }
 
-	int Dec()
-	{
-		std::unique_lock<std::mutex> lock( m_mutex );
-		--m_count;
-		if ( m_count == 0 )
-			condition.notify_all();
-		return m_count;
-	}
+    int Dec()
+    {
+        std::unique_lock<std::mutex> lock(m_mutex);
+        m_count--;
+        if (m_count == 0)
+            condition.notify_all();
+        return m_count;
+    }
 
-	int Get()
-	{
-		std::unique_lock<std::mutex> lock( m_mutex );
-		return m_count;
-	}
+    int Get()
+    {
+        std::unique_lock<std::mutex> lock(m_mutex);
+        return m_count;
+    }
 
-	void Reset()
-	{
-		std::unique_lock<std::mutex> lock( m_mutex );
-		m_count = 0;
-		condition.notify_all();
-	}
+    void Reset()
+    {
+        std::unique_lock<std::mutex> lock(m_mutex);
+        m_count = 0;
+        condition.notify_all();
+    }
 
-	void Wait()
-	{
-		std::unique_lock<std::mutex> lock( m_mutex );
-		while ( m_count != 0 )
-			condition.wait( lock );
-	}
+    void Wait()
+    {
+        std::unique_lock<std::mutex> lock(m_mutex);
+        while (m_count != 0)
+            condition.wait(lock);
+    }
+
 };
 
 class Async
 {
-	static int						s_activeThreads;
-	static int						s_maxThreads;
-	static std::mutex				s_mutex;
-	static std::condition_variable	s_condition;
-	static bool						s_bExiting;
+    static int s_activeThreads;
+    static int s_maxThreads;
+    static std::mutex s_mutex;
+    static std::condition_variable s_condition;
+    static bool s_bExiting;
 
-	std::function<void()>			m_job;
-	Sync*							m_pSync;
-	std::thread*					m_pThread;
+    std::function<void()> m_job;
+    Sync* m_pSync;
+    std::thread* m_pThread;
 
 public:
-	Async( std::function<void()> job, Sync* pSync = NULL );
-	~Async();
-	static void Wait( Sync* pSync );
+    Async(std::function<void()> job, Sync* pSync = NULL);
+    ~Async();
+    static void Wait(Sync* pSync);
 };
 
 class AsyncPool
 {
-	std::vector<Async * >			m_pool;
-	
+    std::vector<Async*> m_pool;
 public:
-	AsyncPool();
-	void Flush();
-	void AddAsyncTask( std::function<void()> job, Sync* pSync = NULL );
+    ~AsyncPool();
+    void Flush();
+    void AddAsyncTask(std::function<void()> job, Sync* pSync = NULL);
 };
 
-void ExecAsyncIfThereIsAPool( AsyncPool* pAsyncPool, std::function<void()> job );
+void ExecAsyncIfThereIsAPool(AsyncPool* pAsyncPool, std::function<void()> job);

@@ -284,6 +284,221 @@ namespace Engine_VK
         SetResourceName( m_pDevice->GetDevice(), VK_OBJECT_TYPE_IMAGE_VIEW, (uint64_t)*pImageView, m_name.c_str() );
     }
 
+    VkFormat TranslateDxgiFormatIntoVulkans(DXGI_FORMAT format)
+    {
+        switch (format)
+        {
+        case DXGI_FORMAT_B8G8R8A8_UNORM:        return VK_FORMAT_B8G8R8A8_UNORM;
+        case DXGI_FORMAT_R8G8B8A8_UNORM:        return VK_FORMAT_R8G8B8A8_UNORM;
+        case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:   return VK_FORMAT_R8G8B8A8_SRGB;
+        case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:   return VK_FORMAT_B8G8R8A8_SRGB;
+        case DXGI_FORMAT_BC1_UNORM:             return VK_FORMAT_BC1_RGB_UNORM_BLOCK;
+        case DXGI_FORMAT_BC1_UNORM_SRGB:        return VK_FORMAT_BC1_RGB_SRGB_BLOCK;
+        case DXGI_FORMAT_BC2_UNORM:             return VK_FORMAT_BC2_UNORM_BLOCK;
+        case DXGI_FORMAT_BC2_UNORM_SRGB:        return VK_FORMAT_BC2_SRGB_BLOCK;
+        case DXGI_FORMAT_BC3_UNORM:             return VK_FORMAT_BC3_UNORM_BLOCK;
+        case DXGI_FORMAT_BC3_UNORM_SRGB:        return VK_FORMAT_BC3_SRGB_BLOCK;
+        case DXGI_FORMAT_BC4_UNORM:             return VK_FORMAT_BC4_UNORM_BLOCK;
+        case DXGI_FORMAT_BC4_SNORM:             return VK_FORMAT_BC4_UNORM_BLOCK;
+        case DXGI_FORMAT_BC5_UNORM:             return VK_FORMAT_BC5_UNORM_BLOCK;
+        case DXGI_FORMAT_BC5_SNORM:             return VK_FORMAT_BC5_UNORM_BLOCK;
+        case DXGI_FORMAT_B5G6R5_UNORM:          return VK_FORMAT_B5G6R5_UNORM_PACK16;
+        case DXGI_FORMAT_B5G5R5A1_UNORM:        return VK_FORMAT_B5G5R5A1_UNORM_PACK16;
+        case DXGI_FORMAT_BC6H_UF16:             return VK_FORMAT_BC6H_UFLOAT_BLOCK;
+        case DXGI_FORMAT_BC6H_SF16:             return VK_FORMAT_BC6H_SFLOAT_BLOCK;
+        case DXGI_FORMAT_BC7_UNORM:             return VK_FORMAT_BC7_UNORM_BLOCK;
+        case DXGI_FORMAT_BC7_UNORM_SRGB:        return VK_FORMAT_BC7_SRGB_BLOCK;
+        case DXGI_FORMAT_R10G10B10A2_UNORM:     return VK_FORMAT_A2R10G10B10_UNORM_PACK32;
+        case DXGI_FORMAT_R16G16B16A16_FLOAT:    return VK_FORMAT_R16G16B16A16_SFLOAT;
+        case DXGI_FORMAT_R32G32B32A32_FLOAT:    return VK_FORMAT_R32G32B32A32_SFLOAT;
+        case DXGI_FORMAT_A8_UNORM:              return VK_FORMAT_R8_UNORM;
+        default: assert(false);                 return VK_FORMAT_UNDEFINED;
+        }
+    }
+
+    //------------------------------------------------------------------------------------------
+    // Create a comitted resource using m_header.
+    //------------------------------------------------------------------------------------------
+    VkImage Texture::CreateTextureCommitted(Device* pDevice, UploadHeap* pUploadHeap, const char* pName, bool useSRGB, VkImageUsageFlags usageFlags)
+    {
+        VkImageCreateInfo info = {};
+
+        if (pName)
+            m_name = pName;
+
+        if (useSRGB && ((usageFlags & VK_IMAGE_USAGE_STORAGE_BIT) != 0))
+        {
+            // the storage bit is not supported for srgb formats
+            // we can still use the srgb format on an image view if the access is read-only
+            // for write access, we need to use the image view with unorm format
+            // this is ok as srgb and unorm formats are compatible with each other.
+            VkImageFormatListCreateInfo formatListInfo = {};
+            formatListInfo.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
+            formatListInfo.viewFormatCount = 2;
+            VkFormat list[2];
+            list[0] = TranslateDxgiFormatIntoVulkans(m_header.format);
+            list[1] = TranslateDxgiFormatIntoVulkans(SetFormatGamma(m_header.format, useSRGB));
+            formatListInfo.pViewFormats = list;
+
+            info.pNext = &formatListInfo;
+        }
+        else
+        {
+            m_header.format = SetFormatGamma(m_header.format, useSRGB);
+        }
+
+        m_format = TranslateDxgiFormatIntoVulkans((DXGI_FORMAT)m_header.format);
+
+        VkImage tex;
+
+        // Create the image.
+        {
+            info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+            info.imageType = VK_IMAGE_TYPE_2D;
+            info.format = m_format;
+            info.extent.width = m_header.width;
+            info.extent.height = m_header.height;
+            info.extent.depth = 1;
+            info.mipLevels = m_header.mipMapCount;
+            info.arrayLayers = m_header.arraySize;
+            if (m_header.arraySize == 6)
+                info.flags |= VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
+            info.samples = VK_SAMPLE_COUNT_1_BIT;
+            info.tiling = VK_IMAGE_TILING_OPTIMAL;
+            info.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | usageFlags;
+            info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+            info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+            // allocate memory and bind the image to it.
+#ifdef  USE_VMA
+            VmaAllocationCreateInfo imageAllocCreatInfo = {};
+            imageAllocCreatInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+            imageAllocCreatInfo.flags = VMA_ALLOCATION_CREATE_USER_DATA_COPY_STRING_BIT;
+            imageAllocCreatInfo.pUserData = (void*)m_name.c_str();
+            VmaAllocationInfo gpuImageAlocInfo = {};
+            VkResult res = vmaCreateImage(pDevice->GetAllocator(), &info, &imageAllocCreatInfo, &tex, &m_imageAlloc, &gpuImageAlocInfo);
+            assert(res == VK_SUCCESS);
+            SetResourceName(pDevice->GetDevice(), VK_OBJECT_TYPE_IMAGE, (uint64_t)tex, m_name.c_str());
+#else
+            VkResult res = vmaCreateImage(pDevice->GetDevice(), &info, NULL, &tex);
+            assert(res == VK_SUCCESS);
+
+            VkMemoryRequirements mem_reqs;
+            vkGetImageMemoryRequirements(pDevice->GetDevice(), &mem_reqs);
+
+            VkMemoryAllocateInfo alloc_info = { };
+            alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+            alloc_info.allocationSize = mem_reqs.size;
+            alloc_info.memoryTypeIndex = 0;
+
+            bool pass = memory_type_from_properties(pDevice->GetPhysicalDeviceMemoryProperties(), mem_reqs.memoryTypeBits,
+                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                &alloc_info.memoryTypeIndex);
+            assert(pass && "No mappable, coherent memory");
+
+            res = vkAllocateMemory(pDevice->GetDevice(), &alloc_info, NULL, &m_deviceMemory);
+            assert(res == VK_SUCCESS);
+
+            res = vmabindImageMemory(pDevice->GetDevice(), tex, m_deviceMemory, 0);
+            assert(res == VK_SUCCESS);
+
+#endif //  USE_VMA
+  
+        }
+
+        return tex;
+    }
+
+    void Texture::LoadAndUpload(Device* pDevice, UploadHeap* pUploadHeap, ImgLoader* pDds, VkImage pTexture2D)
+    {
+        // Upload Image.
+        {
+            VkImageMemoryBarrier copy_barrier = { };
+            copy_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+            copy_barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+            copy_barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+            copy_barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            copy_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+            copy_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+            copy_barrier.image = pTexture2D;
+            copy_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            copy_barrier.subresourceRange.baseMipLevel = 0;
+            copy_barrier.subresourceRange.levelCount = m_header.mipMapCount;
+            copy_barrier.subresourceRange.layerCount = m_header.arraySize;
+            pUploadHeap->AddPreBarrier(copy_barrier);
+        }
+
+        // compute pixel size.
+        //
+        UINT32 bytesPerPixel = (UINT32)GetPixelByteSize((DXGI_FORMAT)m_header.format); // note that bytePerPixel in BC foramts is treated as bytesPerBlock.
+        UINT32 pixelsPerBlock = 1;
+        if (IsBCFormat(m_header.format))
+        {
+            pixelsPerBlock = 4 * 4; // BC formats have 4*4 pixels per block.
+        }
+
+        for(uint32_t a = 0; a < m_header.arraySize; ++a)
+        {
+            // Copy all the mip slices into the offsets apecified by the footprint structure.
+            //
+            for (uint32_t mip = 0; mip < m_header.mipMapCount; ++mip)
+            {
+                uint32_t dwWidth = std::max<uint32_t>(m_header.width >> mip, 1);
+                uint32_t dwHeight = std::max<uint32_t>(m_header.height >> mip, 1);
+
+                UINT64 UplHeapSize = (dwWidth * dwHeight * bytesPerPixel) / pixelsPerBlock;
+                UINT8* pixels = pUploadHeap->BeginSuballocate(SIZE_T(UplHeapSize), 512);
+
+                if (pixels == NULL)
+                {
+                    // We ran out of mem in the upload heap, flush it and try allocating mem from it again.
+                    pUploadHeap->FlushAndFinish(true);
+                    pixels = pUploadHeap->Suballocate(SIZE_T(UplHeapSize), 512);
+                    assert(pixels != NULL);
+                }
+
+                uint32_t offset = uint32_t(pixels - pUploadHeap->BasePtr());
+
+                pDds->CopyPixels(pixels, (dwWidth * bytesPerPixel) / pixelsPerBlock, (dwWidth * bytesPerPixel) / pixelsPerBlock, dwHeight);
+
+                pUploadHeap->EndSuballocate();
+                
+                {
+                    VkBufferImageCopy region = {};
+                    region.bufferOffset = offset;
+                    region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+                    region.imageSubresource.layerCount = 1;
+                    region.imageSubresource.baseArrayLayer = a;
+                    region.imageSubresource.mipLevel = mip;
+                    region.imageExtent.width = dwWidth;
+                    region.imageExtent.height = dwHeight;
+                    region.imageExtent.depth = 1;
+                    pUploadHeap->AddCopy(pTexture2D, region);
+                }
+            }
+        }
+
+
+        // prepare to shader read.
+        //
+        {
+            VkImageMemoryBarrier use_barrier = {};
+            use_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+            use_barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+            use_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+            use_barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            use_barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            use_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+            use_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+            use_barrier.image = pTexture2D;
+            use_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            use_barrier.subresourceRange.levelCount = m_header.mipMapCount;
+            use_barrier.subresourceRange.layerCount = m_header.arraySize;
+            pUploadHeap->AddPostBarrier(use_barrier);
+        }
+    }
+
+
     //---------------------------------------------------------------------------------------------------------
     // Entry function to initialize and image from a .DDS texture
     //---------------------------------------------------------------------------------------------------------
@@ -389,35 +604,5 @@ namespace Engine_VK
         return true;
     }
 
-    VkFormat TranslateDxgiFormatIntoVulkans( DXGI_FORMAT format )
-    {
-        switch( format )
-        {
-            case DXGI_FORMAT_B8G8R8A8_UNORM:        return VK_FORMAT_B8G8R8A8_UNORM;
-            case DXGI_FORMAT_R8G8B8A8_UNORM:        return VK_FORMAT_R8G8B8A8_UNORM;
-            case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:   return VK_FORMAT_R8G8B8A8_SRGB;
-            case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:   return VK_FORMAT_B8G8R8A8_SRGB;
-            case DXGI_FORMAT_BC1_UNORM:             return VK_FORMAT_BC1_RGB_UNORM_BLOCK;
-            case DXGI_FORMAT_BC1_UNORM_SRGB:        return VK_FORMAT_BC1_RGB_SRGB_BLOCK;
-            case DXGI_FORMAT_BC2_UNORM:             return VK_FORMAT_BC2_UNORM_BLOCK;
-            case DXGI_FORMAT_BC2_UNORM_SRGB:        return VK_FORMAT_BC2_SRGB_BLOCK;
-            case DXGI_FORMAT_BC3_UNORM:             return VK_FORMAT_BC3_UNORM_BLOCK;
-            case DXGI_FORMAT_BC3_UNORM_SRGB:        return VK_FORMAT_BC3_SRGB_BLOCK;
-            case DXGI_FORMAT_BC4_UNORM:             return VK_FORMAT_BC4_UNORM_BLOCK;
-            case DXGI_FORMAT_BC4_SNORM:             return VK_FORMAT_BC4_UNORM_BLOCK;
-            case DXGI_FORMAT_BC5_UNORM:             return VK_FORMAT_BC5_UNORM_BLOCK;
-            case DXGI_FORMAT_BC5_SNORM:             return VK_FORMAT_BC5_UNORM_BLOCK;
-            case DXGI_FORMAT_B5G6R5_UNORM:          return VK_FORMAT_B5G6R5_UNORM_PACK16;
-            case DXGI_FORMAT_B5G5R5A1_UNORM:        return VK_FORMAT_B5G5R5A1_UNORM_PACK16;
-            case DXGI_FORMAT_BC6H_UF16:             return VK_FORMAT_BC6H_UFLOAT_BLOCK;
-            case DXGI_FORMAT_BC6H_SF16:             return VK_FORMAT_BC6H_SFLOAT_BLOCK;
-            case DXGI_FORMAT_BC7_UNORM:             return VK_FORMAT_BC7_UNORM_BLOCK;
-            case DXGI_FORMAT_BC7_UNORM_SRGB:        return VK_FORMAT_BC7_SRGB_BLOCK;
-            case DXGI_FORMAT_R10G10B10A2_UNORM:     return VK_FORMAT_A2R10G10B10_UNORM_PACK32;
-            case DXGI_FORMAT_R16G16B16A16_FLOAT:    return VK_FORMAT_R16G16B16A16_SFLOAT;
-            case DXGI_FORMAT_R32G32B32A32_FLOAT:    return VK_FORMAT_R32G32B32A32_SFLOAT;
-            case DXGI_FORMAT_A8_UNORM:              return VK_FORMAT_R8_UNORM;
-            default: assert(false);                 return VK_FORMAT_UNDEFINED;
-        }
-    }
+    
 }

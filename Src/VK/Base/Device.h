@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Common/stdafx.h"
 #include <vulkan/vulkan.h>
 #include "VK/Base/DeviceProperties.h"
 #include "VK/Base/InstanceProperties.h"
@@ -7,7 +8,7 @@
 #define USE_VMA
 
 #ifdef USE_VMA
-#include "VulkanMemoryAllocator/vk_mem_alloc.h"
+#include <VulkanMemoryAllocator/vk_mem_alloc.h>
 #endif
 
 namespace Engine_VK

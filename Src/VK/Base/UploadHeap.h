@@ -38,6 +38,10 @@ namespace Engine_VK
 		VkBuffer		GetResource() { return m_buffer; }
 		VkCommandBuffer	GetCommandList() { return m_commandBuffer; }
 
+		void AddCopy(VkImage image, VkBufferImageCopy bufferImageCopy);
+		void AddPreBarrier(VkImageMemoryBarrier imageMemoryBarrier);
+		void AddPostBarrier(VkImageMemoryBarrier imageMemoryBarrier);
+
 		void			Flush();
 		void			FlushAndFinish( bool bDoBarriers = false );
 

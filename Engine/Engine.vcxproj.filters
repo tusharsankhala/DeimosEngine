@@ -19,12 +19,6 @@
     <Filter Include="Header Files\DX12">
       <UniqueIdentifier>{d1c82397-ac50-4cb8-9630-02287cb19d58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\ImGui">
-      <UniqueIdentifier>{99449ce9-bb5b-4e62-b9d8-2886d58f4afa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ImGui">
-      <UniqueIdentifier>{82cc5636-19e5-4477-bb31-e9bf763eef67}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\VK">
       <UniqueIdentifier>{e04beee4-7eed-4410-9d3d-6e1ba377d95b}</UniqueIdentifier>
     </Filter>
@@ -101,12 +95,6 @@
   <ItemGroup>
     <ClCompile Include="..\Src\main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\External\ImGui\imgui.cpp">
-      <Filter>Source Files\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\External\ImGui\imgui_draw.cpp">
-      <Filter>Source Files\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Src\VK\Base\FrameworkWindows.cpp">
       <Filter>Source Files\VK\Base</Filter>
@@ -225,9 +213,6 @@
     <ClCompile Include="..\Src\VK\PostProcess\PostProcPS.cpp">
       <Filter>Source Files\VK\PostProcess</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\VK\Base\ImGuiBackend.cpp">
-      <Filter>Source Files\VK\Base</Filter>
-    </ClCompile>
     <ClCompile Include="..\Src\Common\Misc\DxgiFormatHelper.cpp">
       <Filter>Source Files\Common\Misc</Filter>
     </ClCompile>
@@ -237,11 +222,20 @@
     <ClCompile Include="..\Src\Common\Misc\ThreadPool.cpp">
       <Filter>Source Files\Common\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\Common\Misc\Hash.cpp">
+      <Filter>Source Files\Common\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\ShaderCompiler\ShaderCompilerCache.cpp">
+      <Filter>Source Files\Common\ShaderCompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\Misc\Error.cpp">
+      <Filter>Source Files\Common\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\Base\Imgui.cpp">
+      <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\External\ImGui\imgui.h">
-      <Filter>Header Files\ImGui</Filter>
-    </ClInclude>
     <ClInclude Include="..\Src\VK\Base\FrameworkWindows.h">
       <Filter>Header Files\VK\Base</Filter>
     </ClInclude>
@@ -371,9 +365,6 @@
     <ClInclude Include="..\Src\VK\Common\stdafx.h">
       <Filter>Header Files\VK\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Src\VK\Base\ImGuiBackend.h">
-      <Filter>Header Files\VK\Base</Filter>
-    </ClInclude>
     <ClInclude Include="..\Src\Common\Misc\DxgiFormatHelper.h">
       <Filter>Header Files\Common\Misc</Filter>
     </ClInclude>
@@ -385,6 +376,15 @@
     </ClInclude>
     <ClInclude Include="..\Src\Common\Misc\AsyncCache.h">
       <Filter>Header Files\Common\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\ShaderCompiler\ShaderCompilerCache.h">
+      <Filter>Header Files\Common\ShaderCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Misc\Error.h">
+      <Filter>Header Files\Common\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\Base\Imgui.h">
+      <Filter>Header Files\VK\Base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

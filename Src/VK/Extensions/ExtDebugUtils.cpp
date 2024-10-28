@@ -39,4 +39,25 @@ namespace Engine_VK
 			s_vkSetDebugUtilsObjectName( device, &nameInfo );
 		}
 	}
+
+	void SetPerfMarkerBegin(VkCommandBuffer cmd_buf, const char* name)
+	{
+		if (s_vkCmdBeginDebugUtilsLabel)
+		{
+			VkDebugUtilsLabelEXT label = {};
+			label.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+			label.pLabelName = name;
+			const float color[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+			memcpy( label.color, color, sizeof( color ));
+			s_vkCmdBeginDebugUtilsLabel(cmd_buf, &label);
+		}
+	}
+
+	void SetPerfMarkerEnd(VkCommandBuffer cmd_buf)
+	{
+		if (s_vkCmdEndDebugUtilsLabel)
+		{
+			s_vkCmdEndDebugUtilsLabel(cmd_buf);
+		}
+	}
 }

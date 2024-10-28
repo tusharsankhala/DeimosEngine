@@ -21,12 +21,18 @@ namespace Engine_VK
 	// Functions for Freesync HDR.
 	extern PFN_vkSetLocalDimmingAMD							g_vkSetLocalDimmingAMD;
 
+	static bool s_isHdrInstanceExtensionPresent = false;
+	static bool s_isHdrDeviceExtensionsPresent = false;
+	static bool s_isFSEDeviceExtensionsPresent = false;
+	static bool s_isFSHDRDeviceExtensionsPresent = false;
+
+
 	void ExtCheckHDRInstanceExtensions( InstanceProperties* pIP );
 	void ExtCheckHDRDeviceExtensions( DeviceProperties* pDP );
 	void ExtCheckFSEDeviceExtensions( DeviceProperties* pDP );
 	void ExtCheckFreeSyncHDRDeviceExtensions( DeviceProperties* pDP );
 
-    void ExtGetHRDFSEFreesyncHDRProcAddresses( VkInstance instance, VkDevice device );
+    void ExtGetHDRFSEFreeSyncHDRProcAddresses( VkInstance instance, VkDevice device );
 
     bool ExtAreHDRExtensionsPresent();
     bool ExtAreFSEExtensionsPresent();

@@ -238,6 +238,52 @@ size_t GetPixelByteSize( DXGI_FORMAT fmt )
     return 0;
 }
 
+DXGI_FORMAT ConvertIntoNonGammaFormat(DXGI_FORMAT format)
+{
+    switch (format)
+    {
+        case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB: return DXGI_FORMAT_R8G8B8A8_UNORM;
+        case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB: return DXGI_FORMAT_B8G8R8A8_UNORM;
+        case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB: return DXGI_FORMAT_B8G8R8X8_UNORM;
+        case DXGI_FORMAT_BC1_UNORM_SRGB: return DXGI_FORMAT_BC1_UNORM;
+        case DXGI_FORMAT_BC2_UNORM_SRGB: return DXGI_FORMAT_BC2_UNORM;
+        case DXGI_FORMAT_BC3_UNORM_SRGB: return DXGI_FORMAT_BC3_UNORM;
+        case DXGI_FORMAT_BC7_UNORM_SRGB: return DXGI_FORMAT_BC7_UNORM;
+    }
+
+    return format;
+}
+
+DXGI_FORMAT ConvertIntoGammaFormat(DXGI_FORMAT format)
+{
+    switch (format)
+    {
+        case DXGI_FORMAT_B8G8R8A8_UNORM: return DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+        case DXGI_FORMAT_R8G8B8A8_UNORM: return DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+        case DXGI_FORMAT_B8G8R8X8_UNORM: return DXGI_FORMAT_B8G8R8X8_UNORM_SRGB;
+        case DXGI_FORMAT_BC1_UNORM: return DXGI_FORMAT_BC1_UNORM_SRGB;
+        case DXGI_FORMAT_BC2_UNORM: return DXGI_FORMAT_BC2_UNORM_SRGB;
+        case DXGI_FORMAT_BC3_UNORM: return DXGI_FORMAT_BC3_UNORM_SRGB;
+        case DXGI_FORMAT_BC7_UNORM: return DXGI_FORMAT_BC7_UNORM_SRGB;
+    }
+
+    return format;
+}
+
+DXGI_FORMAT SetFormatGamma(DXGI_FORMAT format, bool addGamma)
+{
+    if (addGamma)
+    {
+        format = ConvertIntoGammaFormat(format);
+    }
+    else
+    {
+        format = ConvertIntoNonGammaFormat(format);
+    }
+
+    return format;
+}
+
 bool IsBCFormat( DXGI_FORMAT format )
 {
     return ( format >= DXGI_FORMAT_BC1_TYPELESS && format <= DXGI_FORMAT_BC5_SNORM ) || ( format >= DXGI_FORMAT_BC6H_TYPELESS && format <= DXGI_FORMAT_BC7_UNORM_SRGB );

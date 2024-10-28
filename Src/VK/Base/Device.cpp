@@ -1,4 +1,3 @@
-#include "Common/stdafx.h"
 
 #include "Device.h"
 #include "VK/Base/Instance.h"
@@ -11,6 +10,11 @@
 #include "VK/Extensions/ExtVRS.h"
 #include "VK/Extensions/ExtValidation.h"
 #include "Common/Misc/Misc.h"
+
+#ifdef USE_VMA
+#define VMA_IMPLEMENTATION
+#include <VulkanMemoryAllocator/vk_mem_alloc.h>
+#endif
 
 namespace Engine_VK
 {
@@ -246,7 +250,7 @@ namespace Engine_VK
 		// Init the extensios ( If they have been enabled succesfully )
 		//
 		ExtDebugUtilsGetProcAddresses( m_device );
-		ExtGetHRDFSEFreesyncHDRProcAddresses( m_instance, m_device );
+		ExtGetHDRFSEFreeSyncHDRProcAddresses( m_instance, m_device );
 	}
 
 

@@ -166,6 +166,24 @@ namespace Engine_VK
 		allocating.Dec();
 	}
 
+	void UploadHeap::AddCopy(VkImage image, VkBufferImageCopy bufferImageCopy)
+	{
+		std::unique_lock<std::mutex> lock(m_mutex);
+		m_copies.push_back({ image, bufferImageCopy });
+	}
+
+	void UploadHeap::AddPreBarrier(VkImageMemoryBarrier imageMemoryBarrier)
+	{
+		std::unique_lock<std::mutex> lock(m_mutex);
+		m_toPreBarrier.push_back({ imageMemoryBarrier });
+	}
+
+	void UploadHeap::AddPostBarrier(VkImageMemoryBarrier imageMemoryBarrier)
+	{
+		std::unique_lock<std::mutex> lock(m_mutex);
+		m_toPostBarrier.push_back({ imageMemoryBarrier });
+	}
+
 	void UploadHeap::Flush()
 	{
 		VkResult res;

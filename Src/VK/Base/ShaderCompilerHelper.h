@@ -15,11 +15,12 @@ namespace Engine_VK
 	};
 
 	void CreateShaderCache();
-	void DestroyShaderCache( Device* pdevice);
+	void DestroyShaderCache(Device* pdevice);
 
-	VkResult CompileShaderFromString( VkDevice device, ShaderSourceType sourceType, const VkShaderStageFlagBits shader_type, const char* pShaderCode,
-									  const char* pShaderEntryPoint, const char* pExtraParams, const DefineList* pDefines, VkPipelineShaderStageCreateInfo* pShader );
+	// Does as the function name says and uses a cache
+	VkResult VKCompileFromString(VkDevice device, ShaderSourceType sourceType, const VkShaderStageFlagBits shader_type, const char* pShaderCode,
+								 const char* pShaderEntryPoint, const char* pExtraParams, const DefineList* pDefines, VkPipelineShaderStageCreateInfo* pShader);
 
-	VkResult CompileShaderFromFile( VkDevice device, const VkShaderStageFlagBits shader_type, const char* pFilename, const char* pShaderEntryPoint,
-									const char* pExtraParams, const DefineList* pDefines, VkPipelineShaderStageCreateInfo* pShader );
+	VkResult VKCompileFromFile(VkDevice device, const VkShaderStageFlagBits shader_type, const char* pFilename, const char* pShaderEntryPoint, const char* pExtraParams,
+							   const DefineList* pDefines, VkPipelineShaderStageCreateInfo* pShader);
 }

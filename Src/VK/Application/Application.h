@@ -2,7 +2,6 @@
 
 #include "VK/Base/FrameworkWindows.h"
 #include "VK/Renderer/Renderer.h"
-#include <Common/GLTF/GltfCommon.h>
 #include "UI/UI.h"
 
 // This class encapsulates the 'application' and is responsible for handling window events and scene updates (simulation)

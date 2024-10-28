@@ -64,6 +64,8 @@ namespace Engine_VK
 		}
 
 		Trace("The instance layer '%s' has not been found\n", instanceLayerName );
+
+		return false;
 	}
 
 	bool InstanceProperties::AddInstanceExtensionName( const char* instanceExtensionName )
@@ -75,6 +77,8 @@ namespace Engine_VK
 		}
 
 		Trace("The instance extension '%s' has not been found\n", instanceExtensionName );
+
+		return false;
 	}
 
 	void InstanceProperties::GetExtensionNamesAndConfigs(std::vector<const char*>* pInstance_layer_names, std::vector<const char*>* pInstance_extensions_names)

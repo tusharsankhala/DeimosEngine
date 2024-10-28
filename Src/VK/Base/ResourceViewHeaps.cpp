@@ -1,3 +1,4 @@
+#include "Common/stdafx.h"
 #include "ResourceViewHeaps.h"
 
 namespace Engine_VK
@@ -31,5 +32,50 @@ namespace Engine_VK
 	void ResourceViewHeaps::OnDestroy()
 	{
 		vkDestroyDescriptorPool( m_pDevice->GetDevice(), m_descriptorPool, NULL );
+	}
+
+	bool ResourceViewHeaps::AllocDescriptor( VkDescriptorSetLayout descSetLayout, VkDescriptorSet* pDescriptorSet )
+	{
+		std::lock_guard< std::mutex > lock( m_mutex );
+
+		VkDescriptorSetAllocateInfo alloc_info;
+		alloc_info.sType				= VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		alloc_info.pNext				= NULL;
+		alloc_info.descriptorPool		= m_descriptorPool;
+		alloc_info.descriptorSetCount	= 1;
+		alloc_info.pSetLayouts			= &descSetLayout;
+
+		VkResult res = vkAllocateDescriptorSets( m_pDevice->GetDevice(), &alloc_info, pDescriptorSet );
+		assert( res == VK_SUCCESS );
+
+		m_allocatorDescriptorCount++;
+
+		return res == VK_SUCCESS;
+	}
+
+	bool ResourceViewHeaps::AllocDescriptor(int size, const VkSampler* pSamplers, VkDescriptorSetLayout* pDescSetLayout, VkDescriptorSet* pDescriptorSet)
+	{
+		return false;
+	}
+
+	bool ResourceViewHeaps::AllocDescriptor(std::vector<uint32_t>& descriptorCounts, const VkSampler* pSamplers, VkDescriptorSetLayout* pDescSetLayout, VkDescriptorSet* pDescriptorSet)
+	{
+		return false;
+	}
+
+	bool ResourceViewHeaps::CreateDescriptorSetLayout(std::vector<VkDescriptorSetLayoutBinding>* pDescriptorLayoutBinding, VkDescriptorSetLayout* pDescSetLayout)
+	{
+		return false;
+	}
+
+	bool ResourceViewHeaps::CreateDescriptorSetLayoutAndAllocDescriptor(std::vector<VkDescriptorSetLayoutBinding>* pDescriptorLayoutBinding, VkDescriptorSetLayout* pDescSetLayout, VkDescriptorSet* pDescSet)
+	{
+		return false;
+	}
+
+	void ResourceViewHeaps::FreeDescriptor(VkDescriptorSet descriptorSet)
+	{
+		m_allocatorDescriptorCount--;
+		vkFreeDescriptorSets( m_pDevice->GetDevice(), m_descriptorPool, 1, &descriptorSet );
 	}
 }

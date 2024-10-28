@@ -27,7 +27,7 @@ namespace Engine_VK
 		m_frameBuffer = CreateFrameBuffer( m_pGBuffer->GetDevice()->GetDevice(), m_renderPass, &attachments, width, height );
 	}
 
-	void GBufferRenderPass::OnDestoryWindowSizeDependentResources()
+	void GBufferRenderPass::OnDestroyWindowSizeDependentResources()
 	{
 		vkDestroyFramebuffer( m_pGBuffer->GetDevice()->GetDevice(), m_frameBuffer, nullptr );
 	}

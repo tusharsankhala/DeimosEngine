@@ -22,9 +22,16 @@ namespace Engine_VK
 
     class DynamicBufferRing
     {
-        public:
-            VkResult    OnCreate( Device* pDevice, uint32_t numberOfBackBuffers, uint32_t memTotalSize, char* name = NULL );
-            void        OnDestroy();
+    public:
+        VkResult                OnCreate( Device* pDevice, uint32_t numberOfBackBuffers, uint32_t memTotalSize, char* name = NULL );
+        void                    OnDestroy();
+        bool                    AllocConstantBuffer(uint32_t size, void** pData, VkDescriptorBufferInfo* pOut);
+        VkDescriptorBufferInfo  AllocConstantBuffer(uint32_t size, void* pData);
+        bool                    AllocVertexBuffer(uint32_t numberOfVertices, uint32_t strideInBytes, void** pData, VkDescriptorBufferInfo* pOut);
+        bool                    AllocIndexBuffer(uint32_t numberOfIndices, uint32_t strideInBytes, void** pData, VkDescriptorBufferInfo* pOut);
+        void                    OnBeginFrame();
+        void                    SetDescriptorSet( int index, uint32_t size, VkDescriptorSet descriptorSet);
+
 
     private:
         Device*         m_pDevice;

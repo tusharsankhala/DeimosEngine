@@ -1,5 +1,24 @@
+// AMD Cauldron code
+// 
+// Copyright(c) 2017 Advanced Micro Devices, Inc.All rights reserved.
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
 #pragma once
-#include "Common/Misc/ThreadPool.h"
+#include "ThreadPool.h"
 
 // This is a multithreaded shader cache. This is how it works:
 //
@@ -17,109 +36,102 @@
 //
 // This way all the cores should be plenty of work and thread context switches should be minimal.
 //
-//
-
-#include "Common/Misc/Async.h"
+// 
+#include "Async.h"
 
 #define CACHE_ENABLE
-//#define CACHE_LOG
+//#define CACHE_LOG 
 
-template <typename T>
+template<typename T>
 class Cache
 {
 public:
-	struct CacheEntry
-	{
-		Sync m_sync;
-		T m_data;
-	};
-
-	typedef std::map<size_t,CacheEntry> DatabaseType;
+    struct CacheEntry
+    {
+        Sync m_Sync;
+        T m_data;
+    };
+    typedef std::map< size_t, CacheEntry > DatabaseType;
 
 private:
-	DatabaseType	m_database;
-	std::mutex		m_mutex;
+    DatabaseType m_database;
+    std::mutex m_mutex;
 
 public:
-	bool CacheMiss( size_t hash, T* pOut )
-	{
+    bool CacheMiss(size_t hash, T* pOut)
+    {
 #ifdef CACHE_ENABLE
-		DatabaseType::iterator it;
+        auto it = m_database.find( hash );
 
-		// Find whether the shader is in the cache, create an empty entry just so other threads know this thread will be compiling the shader.
-		{
-			std::lock_guard<std::mutex> lock( m_mutex );
-			it = m_database.find( hash );
+        // find whether the shader is in the cache, create an empty entry just so other threads know this thread will be compiling the shader
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            
 
-			// shader not found, we need to compile the shader!
-			if( it == m_database.end() )
-			{
+            // shader not found, we need to compile the shader!
+            if (it == m_database.end())
+            {
 #ifdef CACHE_LOG
-				Trace( format( "thread 0x%04x Compi Begin: %p %i\n", GetCurrentThreadId(), hash, m_database[ hash ].m_sync.Get() ));
+                Trace(format("thread 0x%04x Compi Begin: %p %i\n", GetCurrentThreadId(), hash, m_database[hash].m_Sync.Get()));
 #endif
-				// inc syncing object sp other thread requesting this same shader can tell there is a compilation in progress and they need to wait for this thread to finish.
-				m_database[ hash ].m_sync.Inc();
-				return true;
-			}
-		}
+                // inc syncing object so other threads requesting this same shader can tell there is a compilation in progress and they need to wait for this thread to finish.
+                m_database[hash].m_Sync.Inc();
+                return true;
+            }
+        }
 
-		// If we have seen these shader before then:
-		{
-			// If there is a thread already trying to comple this shader, then wait for that thread to finish.
-			if ( it->second.m_sys.Get() == 1 )
-			{
+        // If we have seen these shaders before then:
+        {
+            // If there is a thread already trying to compile this shader then wait for that thread to finish
+            if (it->second.m_Sync.Get() == 1)
+            {
 #ifdef CACHE_LOG
-				Trace( format( "thread 0x%04x Wait: %p %i\n", GetCurrentThreadId(), hash, it->second.m_sync.Get() ) );
+                Trace(format("thread 0x%04x Wait: %p %i\n", GetCurrentThreadId(), hash, it->second.m_Sync.Get()));
 #endif
+                Async::Wait(&it->second.m_Sync);
+            }
 
-				Async::Wait( &it->second.m_sync );
-			}
-
-			// If the shader is compiled then return it.
-			*pOut = it->second.m_data;
+            // if the shader was compiled then return it
+            *pOut = it->second.m_data;
 
 #ifdef CACHE_LOG
-			Trace(format( "thread 0x%04x was Cache: %p %i\n", GetCurrentThreadId(), hash ) );
+            Trace(format("thread 0x%04x Was cache: %p \n", GetCurrentThreadId(), hash));
 #endif
-
-			return false;
-		}
+            return false;
+        }
 #endif
+        return true;
+    }
 
-		return true;
-	}
-
-	bool UpdateMiss( size_t hash, T* pValue )
-	{
+    void UpdateCache(size_t hash, T* pValue)
+    {
 #ifdef CACHE_ENABLE
-		DatabaseType::iterator it;
+        auto it = m_database.find(hash);
 
-		{
-			std::lock_guard<std::mutex> lock(m_mutex);
-			it = m_database.find(hash);
-			assert( it != m_database.end() )
-		}
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            
+            assert(it != m_database.end());
+        }
 #ifdef CACHE_LOG
-				Trace(format("thread 0x%04x Compi End: %p %i\n", GetCurrentThreadId(), hash, it->second.m_sync.Get() ) ) );
+        Trace(format("thread 0x%04x Compi End: %p %i\n", GetCurrentThreadId(), hash, it->second.m_Sync.Get()));
 #endif
+        it->second.m_data = *pValue;
+        //assert(it->second.m_Sync.Get() == 1);
 
-			it->second.m_data = *pValue;
-				
-			// The shader has been compiled, set sync to 0 to indicate it is compiled
-			// This also wakes up all the threads waiting on Async::Wait( &it->second.m_sync );
-			it->second.m_sync.Dec();
+        // The shader has been compiled, set sync to 0 to indicate it is compiled
+        // This also wakes up all the threads waiting on  Async::Wait(&it->second.m_Sync);
+        it->second.m_Sync.Dec();
 #endif
+    }
 
-	}
-
-	template <typename Func>
-	void ForEach( Func func )
-	{
-		std::lock_guard<std::mutex> lock( m_mutex );
-		for( auto it = m_database.begin(); it != m_database.end(); ++it )
-		{
-			func( it );
-		}
-	}
+    template<typename Func>
+    void ForEach(Func func)
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        for (auto it = m_database.begin(); it != m_database.end(); ++it)
+        {
+            func(it);
+        }
+    }
 };
-
