@@ -180,14 +180,15 @@ namespace Engine_VK
         out.range       = size;
 
         VkWriteDescriptorSet write;
-        write = {};
-        write.sType     = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        write.pNext     = NULL;
-        write.dstSet    = descriptorSet;
-        write.descriptorCount = 1;
-        write.pBufferInfo = &out;
-        write.dstArrayElement = 0;
-        write.dstBinding = index;
+        write                   = {};
+        write.sType             = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        write.pNext             = NULL;
+        write.dstSet            = descriptorSet;
+        write.descriptorCount   = 1;
+        write.descriptorType    = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+        write.pBufferInfo       = &out;
+        write.dstArrayElement   = 0;
+        write.dstBinding        = index;
 
         vkUpdateDescriptorSets(m_pDevice->GetDevice(), 1, &write, 0, NULL);
     }

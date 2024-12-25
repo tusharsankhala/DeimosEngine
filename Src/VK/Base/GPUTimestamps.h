@@ -2,7 +2,9 @@
 
 #include <vector>
 #include <string>
-#include <Common/Base/Benchmark.h>
+#include "Common/Base/Benchmark.h"
+
+struct TimeStamp;
 
 namespace Engine_VK
 {
@@ -18,7 +20,7 @@ namespace Engine_VK
 		void OnDestroy();
 
 		void GetTimeStamp( VkCommandBuffer cmd_buf, const char* label );
-		void GetTimeStampUser( TimeStamp ts );
+		void GetTimeStampUser(TimeStamp ts );
 		void OnBeginFrame( VkCommandBuffer cmd_buf, std::vector<TimeStamp>* pTimeStamps );
 		void OnEndFrame();
 

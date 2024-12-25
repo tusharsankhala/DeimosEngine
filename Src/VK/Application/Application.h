@@ -19,6 +19,14 @@ public:
 	void OnResize( bool resizeRender ) override;
 	void OnUpdateDisplay() override;
 
+	void BuildUI();
+	void LoadScene(int scenIndex);
+
+	void OnUpdate();
+
+	void HandleInput(const ImGuiIO& io);
+	void UpdateCamera(Camera& cam, const ImGuiIO& io);
+
 private:
 
 	bool						m_bIsBenchmarking;

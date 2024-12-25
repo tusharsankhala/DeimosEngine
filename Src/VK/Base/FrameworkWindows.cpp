@@ -131,7 +131,45 @@ int RunFramework( HINSTANCE hInstance, LPSTR lpCmdLine, int nCmdShow, FrameworkW
 
 void SetFullscreen( HWND hWnd, bool fullScreen )
 {
+    if (fullScreen)
+    {
+        // Save the old window rect so we can restore it when exiting fullscreen mode.
+        GetWindowRect(hWnd, &m_windowRect);
 
+        // Make the window borderless so that the client area can fillthe screen.
+        SetWindowLong( hWnd, GWL_STYLE, lwindowStyle & ~(WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU | WS_THICKFRAME));
+
+        MONITORINFO monitorInfo;
+        monitorInfo.cbSize = sizeof(monitorInfo);
+        GetMonitorInfo(MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &monitorInfo);
+
+        SetWindowPos(
+            hWnd,
+            HWND_NOTOPMOST,
+            monitorInfo.rcMonitor.left,
+            monitorInfo.rcMonitor.top,
+            monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left,
+            monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top,
+            SWP_FRAMECHANGED | SWP_NOACTIVATE );
+
+        ShowWindow(hWnd, SW_MAXIMIZE);
+    }
+    else
+    {
+        // Restore the window attributes and size.
+        SetWindowLong(hWnd, GWL_STYLE, lwindowStyle);
+
+        SetWindowPos(
+            hWnd,
+            HWND_NOTOPMOST,
+            m_windowRect.left,
+            m_windowRect.top,
+            m_windowRect.right - m_windowRect.left,
+            m_windowRect.bottom - m_windowRect.top,
+            SWP_FRAMECHANGED | SWP_NOACTIVATE);
+
+        ShowWindow(hWnd, SW_MAXIMIZE);
+    }
 }
 
 // This si the main message handler for the program.

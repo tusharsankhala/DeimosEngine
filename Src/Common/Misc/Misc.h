@@ -13,13 +13,51 @@ bool SaveFile(const char* name, void const* data, size_t size, bool isbinary);
 void Trace( const std::string& str );
 void Trace( const char* pFormat, ... );
 bool LaunchProcess(const char* commandLine, const char* filenameErr);
+inline void GetXYZ(float* f, math::Vector4 v)
+{
+	f[0] = v.getX();
+	f[1] = v.getY();
+	f[2] = v.getZ();
+}
 
+bool CameraFrustumToboxCollision(const math::Matrix4& mCameraViewProj, const math::Vector4& boxCenter, const math::Vector4& boxExtent);
 
+struct AxisAlignedBoundingBox
+{
+	math::Vector4	m_min;
+	math::Vector4	m_max;
+	bool			m_isEmpty;
+
+	AxisAlignedBoundingBox();
+
+	void Merge(const AxisAlignedBoundingBox& bb);
+	void Grow(const math::Vector4 v);
+
+	bool HasNoVolume() const;
+};
 
 template<typename T> inline T AlignUp( T val, T alignment )
 {
 	return ( val + alignment - (T)1) & ~(alignment - (T)1);
 }
+
+class Profile
+{
+	double m_startTime;
+	const char* m_label;
+
+public:
+	Profile(const char* label)
+	{
+		m_startTime = MillisecondsNow();
+		m_label = label;
+	}
+
+	~Profile()
+	{
+		Trace(format("*** %s %f ms\n", m_label, (MillisecondsNow() - m_startTime)));
+	}
+};
 
 class Log
 {

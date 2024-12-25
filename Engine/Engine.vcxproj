@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -21,9 +21,13 @@
   <ItemGroup>
     <ClCompile Include="..\Src\Common\Base\Benchmark.cpp" />
     <ClCompile Include="..\Src\Common\Base\ImGuiHelper.cpp" />
+    <ClCompile Include="..\Src\Common\Base\Sequence.cpp" />
     <ClCompile Include="..\Src\Common\GLTF\GltfCommon.cpp" />
+    <ClCompile Include="..\Src\Common\GLTF\GltfHelpers.cpp" />
+    <ClCompile Include="..\Src\Common\GLTF\GltfPbrMaterial.cpp" />
     <ClCompile Include="..\Src\Common\Misc\Async.cpp" />
     <ClCompile Include="..\Src\Common\Misc\Camera.cpp" />
+    <ClCompile Include="..\Src\Common\Misc\ColorConversion.cpp" />
     <ClCompile Include="..\Src\Common\Misc\DDSLoader.cpp" />
     <ClCompile Include="..\Src\Common\Misc\DxgiFormatHelper.cpp" />
     <ClCompile Include="..\Src\Common\Misc\Error.cpp" />
@@ -62,18 +66,33 @@
     <ClCompile Include="..\Src\VK\Extensions\ExtRayTracing.cpp" />
     <ClCompile Include="..\Src\VK\Extensions\ExtValidation.cpp" />
     <ClCompile Include="..\Src\VK\Extensions\ExtVRS.cpp" />
+    <ClCompile Include="..\Src\VK\GLTF\GltfDepthPass.cpp" />
+    <ClCompile Include="..\Src\VK\GLTF\GltfHelpers_VK.cpp" />
+    <ClCompile Include="..\Src\VK\GLTF\GltfPbrPass.cpp" />
+    <ClCompile Include="..\Src\VK\GLTF\GLTFTexturesAndBuffers.cpp" />
+    <ClCompile Include="..\Src\VK\PostProcess\ColorConversionPS.cpp" />
+    <ClCompile Include="..\Src\VK\PostProcess\DownSamplePS.cpp" />
     <ClCompile Include="..\Src\VK\PostProcess\MagnifierPS.cpp" />
     <ClCompile Include="..\Src\VK\PostProcess\PostProcCS.cpp" />
     <ClCompile Include="..\Src\VK\PostProcess\PostProcPS.cpp" />
+    <ClCompile Include="..\Src\VK\PostProcess\SkyDome.cpp" />
+    <ClCompile Include="..\Src\VK\PostProcess\SkyDomeProc.cpp" />
+    <ClCompile Include="..\Src\VK\PostProcess\Tonemapping.cpp" />
+    <ClCompile Include="..\Src\VK\PostProcess\TonemappingCS.cpp" />
     <ClCompile Include="..\Src\VK\Renderer\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\Common\Base\Benchmark.h" />
     <ClInclude Include="..\Src\Common\Base\ImGuiHelper.h" />
+    <ClInclude Include="..\Src\Common\Base\Sequence.h" />
     <ClInclude Include="..\Src\Common\GLTF\GltfCommon.h" />
+    <ClInclude Include="..\Src\Common\GLTF\GltfHelpers.h" />
+    <ClInclude Include="..\Src\Common\GLTF\GltfPbrMaterial.h" />
+    <ClInclude Include="..\Src\Common\GLTF\GltfStructures.h" />
     <ClInclude Include="..\Src\Common\Misc\Async.h" />
     <ClInclude Include="..\Src\Common\Misc\AsyncCache.h" />
     <ClInclude Include="..\Src\Common\Misc\Camera.h" />
+    <ClInclude Include="..\Src\Common\Misc\ColorConversion.h" />
     <ClInclude Include="..\Src\Common\Misc\DDSLoader.h" />
     <ClInclude Include="..\Src\Common\Misc\DxgiFormatHelper.h" />
     <ClInclude Include="..\Src\Common\Misc\Error.h" />
@@ -114,9 +133,19 @@
     <ClInclude Include="..\Src\VK\Extensions\ExtRayTracing.h" />
     <ClInclude Include="..\Src\VK\Extensions\ExtValidation.h" />
     <ClInclude Include="..\Src\VK\Extensions\ExtVRS.h" />
+    <ClInclude Include="..\Src\VK\GLTF\GltfDepthPass.h" />
+    <ClInclude Include="..\Src\VK\GLTF\GltfHelpers_VK.h" />
+    <ClInclude Include="..\Src\VK\GLTF\GltfPbrPass.h" />
+    <ClInclude Include="..\Src\VK\GLTF\GLTFTexturesAndBuffers.h" />
+    <ClInclude Include="..\Src\VK\PostProcess\ColorConversionPS.h" />
+    <ClInclude Include="..\Src\VK\PostProcess\DownSamplePS.h" />
     <ClInclude Include="..\Src\VK\PostProcess\MagnifierPS.h" />
     <ClInclude Include="..\Src\VK\PostProcess\PostProcCS.h" />
     <ClInclude Include="..\Src\VK\PostProcess\PostProcPS.h" />
+    <ClInclude Include="..\Src\VK\PostProcess\SkyDome.h" />
+    <ClInclude Include="..\Src\VK\PostProcess\SkyDomeProc.h" />
+    <ClInclude Include="..\Src\VK\PostProcess\Tonemapping.h" />
+    <ClInclude Include="..\Src\VK\PostProcess\TonemappingCS.h" />
     <ClInclude Include="..\Src\VK\Renderer\Renderer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -208,7 +237,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>Default</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Src;$(VULKAN_SDK)\Include;$(SolutionDir)External;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;$(SolutionDir)Src;$(SolutionDir)External;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
       <LanguageStandard>Default</LanguageStandard>

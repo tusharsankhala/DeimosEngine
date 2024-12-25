@@ -91,6 +91,12 @@
     <Filter Include="Header Files\VK\Common">
       <UniqueIdentifier>{51347ece-2b5c-49fc-925c-8f4f9e9092d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\VK\GLTF">
+      <UniqueIdentifier>{e0853dc8-92bc-460a-992f-a8df61c983d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VK\GLTF">
+      <UniqueIdentifier>{6684853f-b8c3-4ce7-aed4-3e482fc37f4c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\main.cpp">
@@ -233,6 +239,48 @@
     </ClCompile>
     <ClCompile Include="..\Src\VK\Base\Imgui.cpp">
       <Filter>Source Files\VK\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\GLTF\GltfHelpers.cpp">
+      <Filter>Source Files\Common\GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\GLTF\GLTFTexturesAndBuffers.cpp">
+      <Filter>Source Files\VK\GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\Base\Sequence.cpp">
+      <Filter>Source Files\Common\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\GLTF\GltfPbrMaterial.cpp">
+      <Filter>Source Files\Common\GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\GLTF\GltfHelpers_VK.cpp">
+      <Filter>Source Files\VK\GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\GLTF\GltfDepthPass.cpp">
+      <Filter>Source Files\VK\GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\PostProcess\SkyDome.cpp">
+      <Filter>Source Files\VK\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\GLTF\GltfPbrPass.cpp">
+      <Filter>Source Files\VK\GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\PostProcess\SkyDomeProc.cpp">
+      <Filter>Source Files\VK\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\PostProcess\DownSamplePS.cpp">
+      <Filter>Source Files\VK\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\PostProcess\ColorConversionPS.cpp">
+      <Filter>Source Files\VK\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Common\Misc\ColorConversion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\PostProcess\Tonemapping.cpp">
+      <Filter>Source Files\VK\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\VK\PostProcess\TonemappingCS.cpp">
+      <Filter>Source Files\VK\PostProcess</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -385,6 +433,51 @@
     </ClInclude>
     <ClInclude Include="..\Src\VK\Base\Imgui.h">
       <Filter>Header Files\VK\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\GLTF\GltfStructures.h">
+      <Filter>Header Files\Common\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\GLTF\GltfHelpers.h">
+      <Filter>Header Files\Common\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\GLTF\GLTFTexturesAndBuffers.h">
+      <Filter>Header Files\VK\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Base\Sequence.h">
+      <Filter>Header Files\Common\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\GLTF\GltfPbrMaterial.h">
+      <Filter>Header Files\Common\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\GLTF\GltfHelpers_VK.h">
+      <Filter>Header Files\VK\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\GLTF\GltfDepthPass.h">
+      <Filter>Header Files\VK\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\GLTF\GltfPbrPass.h">
+      <Filter>Header Files\VK\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\PostProcess\SkyDome.h">
+      <Filter>Header Files\VK\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\PostProcess\SkyDomeProc.h">
+      <Filter>Header Files\VK\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\PostProcess\DownSamplePS.h">
+      <Filter>Header Files\VK\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\PostProcess\ColorConversionPS.h">
+      <Filter>Header Files\VK\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Common\Misc\ColorConversion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\PostProcess\Tonemapping.h">
+      <Filter>Header Files\VK\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\VK\PostProcess\TonemappingCS.h">
+      <Filter>Header Files\VK\PostProcess</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

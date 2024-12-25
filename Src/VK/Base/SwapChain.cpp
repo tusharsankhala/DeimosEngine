@@ -24,7 +24,7 @@ namespace Engine_VK
 		m_presentQueue			= pDevice->GetPresentQueue();
 
 		// Init FSHDR.
-		//fsHdrInit( pDevice->GetDevice(), pDevice->GetSurface(), pDevice->GetPhysicalDevice(), hWnd );
+		fsHdrInit( pDevice->GetDevice(), pDevice->GetSurface(), pDevice->GetPhysicalDevice(), hWnd );
 
 		// Set some safe format to start with.
 		m_displayMode = DISPLAYMODE_SDR;
@@ -114,6 +114,13 @@ namespace Engine_VK
 	VkImageView SwapChain::GetCurrentBackBufferRTV()
 	{
 		return m_imageViews[m_imageIndex];
+	}
+
+	void SwapChain::GetSemaphores(VkSemaphore* pImageAvailableSemaphore, VkSemaphore* pRenderFinishedSemaphores, VkFence* pCmdBufExecutedFences)
+	{
+		*pImageAvailableSemaphore = m_imageAvailableSemaphores[m_prevSemaphoreIndex];
+		*pRenderFinishedSemaphores = m_renderFinishedSemaphores[m_semaphoreIndex];
+		*pCmdBufExecutedFences = m_cmdBufExecutedFences[m_semaphoreIndex];
 	}
 
 	uint32_t SwapChain::WaitForSwapChain()

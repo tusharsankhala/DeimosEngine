@@ -189,6 +189,71 @@ bool LaunchProcess(const char* commandLine, const char* filenameErr)
 }
 
 //
+// Frustum culls an AABB. The culling is done in clip space
+bool CameraFrustumToboxCollision(const math::Matrix4& mCameraViewProj, const math::Vector4& boxCenter, const math::Vector4& boxExtent)
+{
+	float ex = boxExtent.getX();
+	float ey = boxExtent.getY();
+	float ez = boxExtent.getZ();
+
+	math::Vector4 p[8];
+	p[0] = mCameraViewProj * (boxCenter + math::Vector4(ex, ey, ez, 0));
+	p[1] = mCameraViewProj * (boxCenter + math::Vector4(ex, ey, -ez, 0));
+	p[2] = mCameraViewProj * (boxCenter + math::Vector4(ex, -ey, ez, 0));
+	p[3] = mCameraViewProj * (boxCenter + math::Vector4(ex, -ey, -ez, 0));
+	p[4] = mCameraViewProj * (boxCenter + math::Vector4(-ex, ey, ez, 0));
+	p[5] = mCameraViewProj * (boxCenter + math::Vector4(-ex, ey, -ez, 0));
+	p[6] = mCameraViewProj * (boxCenter + math::Vector4(-ex, -ey, ez, 0));
+	p[7] = mCameraViewProj * (boxCenter + math::Vector4(-ex, -ey, -ez, 0));
+
+	uint32_t left = 0;
+	uint32_t right = 0;
+	uint32_t top = 0;
+	uint32_t bottom = 0;
+	uint32_t back = 0;
+
+	for (int i = 0; i < 8; ++i)
+	{
+		float x = p[i].getX();
+		float y = p[i].getY();
+		float z = p[i].getZ();
+		float w = p[i].getW();
+
+		if (x < -w) left++;
+		if (x > w) right++;
+		if (y < -w) bottom++;
+		if (y > w) top++;
+		if (z < 0) back++;
+	}
+
+	return left == 8 || right == 8 || top == 8 || bottom == 8 || back == 8;
+}
+
+AxisAlignedBoundingBox::AxisAlignedBoundingBox()
+	: m_min()
+	, m_max()
+	, m_isEmpty{ true }
+{}
+
+void AxisAlignedBoundingBox::Merge(const AxisAlignedBoundingBox& bb)
+{
+	if (bb.m_isEmpty)
+		return;
+
+	if (m_isEmpty)
+	{
+		m_max = bb.m_max;
+		m_min = bb.m_min;
+		m_isEmpty = false;
+	}
+	else
+	{
+		m_min = Vectormath::SSE::minPerElem(m_min, bb.m_min);
+		m_max = Vectormath::SSE::minPerElem(m_max, bb.m_max);
+	}
+}
+
+//
 // Formats a string.
 //
 

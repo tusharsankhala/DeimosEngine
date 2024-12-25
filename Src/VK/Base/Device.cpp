@@ -196,12 +196,12 @@ namespace Engine_VK
 		// Enable feature to support fp16 with subgroup operations.
 		//
 		VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR shaderSubgroupExtendedType = {};
-		shaderSubgroupExtendedType.sType						= VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES;
+		shaderSubgroupExtendedType.sType						= VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES_KHR;
 		shaderSubgroupExtendedType.pNext						= pDp->GetNext();	// used to be next to VkDeviceCreateInfo.
 		shaderSubgroupExtendedType.shaderSubgroupExtendedTypes	= VK_TRUE;
 
 		VkPhysicalDeviceRobustness2FeaturesEXT robustness2 = {};
-		robustness2.sType										= VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+		robustness2.sType										= VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
 		robustness2.pNext										= &shaderSubgroupExtendedType;
 		robustness2.nullDescriptor								= VK_TRUE;
 

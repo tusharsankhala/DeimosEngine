@@ -24,9 +24,10 @@ namespace Engine_VK
 	};
 
 	// Only the swapchain should be using these functions.
-
+	bool fsHdrInit(VkDevice device, VkSurfaceKHR surface, VkPhysicalDevice physicalDevice, HWND hWnd);
 	bool fsHdrEnumerateDisplayModes( std::vector<DisplayMode>* pModes, bool includeFreesyncHDR, PresentationMode fullscreenMode, bool enableLocalDimming );
-	
+	const VkHdrMetadataEXT* fsHdrGetDisplayInfo();
+
 	void fsHdrSetFullscreenState( bool fullscreen, VkSwapchainKHR swapchain );
 
 	void fsHdrGetPhysicalDeviceSurfaceCapabilities2KHR( VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfCapabilities );

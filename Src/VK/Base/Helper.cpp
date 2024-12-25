@@ -128,6 +128,107 @@ namespace Engine_VK
 		vkCmdSetScissor( cmd_buf, 0, 1, &scissor );
 	}
 
+	void SetDescriptorSet(VkDevice device, uint32_t index, VkImageView imageView, VkImageLayout imageLayout, VkSampler* pSampler, VkDescriptorSet descriptorSet)
+	{
+		VkDescriptorImageInfo desc_image;
+		desc_image.sampler		= (pSampler == NULL) ? VK_NULL_HANDLE : *pSampler;
+		desc_image.imageView	= imageView;
+		desc_image.imageLayout	= imageLayout;
+
+		VkWriteDescriptorSet write;
+		write = {};
+		write.sType				= VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext				= NULL;
+		write.dstSet			= descriptorSet;
+		write.descriptorCount	= 1;
+		write.descriptorType	= (pSampler == NULL) ? VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE : VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		write.dstBinding		= index;
+		write.dstArrayElement	= 0;
+		
+		vkUpdateDescriptorSets(device, 1, &write, 0, NULL);
+	}
+
+	void SetDescriptorSet(VkDevice device, uint32_t index, VkImageView imageView, VkDescriptorSet descriptorSet)
+	{
+		VkDescriptorImageInfo desc_image;
+		desc_image.sampler = VK_NULL_HANDLE;
+		desc_image.imageView = imageView;
+		desc_image.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+
+		VkWriteDescriptorSet write;
+		write = {};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext = NULL;
+		write.dstSet = descriptorSet;
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+		write.pImageInfo = &desc_image;
+		write.dstBinding = index;
+		write.dstArrayElement = 0;
+
+		vkUpdateDescriptorSets(device, 1, &write, 0, NULL);
+	}
+
+	void SetDescriptorSet(VkDevice device, uint32_t index, VkImageView imageView, VkSampler* pSampler, VkDescriptorSet descriptorSet)
+	{
+		SetDescriptorSet(device, index, imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, pSampler, descriptorSet);
+	}
+
+	VkRenderPass SimpleColorWriteRenderPass(VkDevice device, VkImageLayout initialLayout, VkImageLayout passLayout, VkImageLayout finalLayout)
+	{
+		// Color RT.
+		VkAttachmentDescription attachments[1];
+		attachments[0].format			= VK_FORMAT_R16G16B16A16_SFLOAT;
+		attachments[0].samples			= VK_SAMPLE_COUNT_1_BIT;
+		attachments[0].loadOp			= VK_ATTACHMENT_LOAD_OP_DONT_CARE;		// We don't care about the previous contents. this is for a full screen pass with no blending.
+		attachments[0].storeOp			= VK_ATTACHMENT_STORE_OP_STORE;
+		attachments[0].stencilLoadOp	= VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		attachments[0].stencilStoreOp	= VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		attachments[0].initialLayout	= initialLayout;
+		attachments[0].finalLayout		= finalLayout;
+		attachments[0].flags			= 0;
+
+		VkAttachmentReference color_reference = { 0, passLayout };
+
+		VkSubpassDescription subpass = {};
+		subpass.pipelineBindPoint		= VK_PIPELINE_BIND_POINT_GRAPHICS;
+		subpass.flags					= 0;
+		subpass.inputAttachmentCount	= 0;
+		subpass.colorAttachmentCount	= 1;
+		subpass.pColorAttachments		= &color_reference;
+		subpass.pResolveAttachments		= NULL;
+		subpass.pDepthStencilAttachment = NULL;
+		subpass.preserveAttachmentCount = 0;
+		subpass.pPreserveAttachments	= NULL;
+
+		VkSubpassDependency dep = {};
+		dep.dependencyFlags				= 0;
+		dep.dstAccessMask				= VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT;
+		dep.dstStageMask				= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		dep.dstSubpass					= VK_SUBPASS_EXTERNAL;
+		dep.srcAccessMask				= VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT;
+		dep.srcStageMask				= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		dep.srcSubpass					= 0;
+
+		VkRenderPassCreateInfo rp_info = {};
+		rp_info.sType					= VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+		rp_info.pNext					= NULL;
+		rp_info.attachmentCount			= 1;
+		rp_info.pAttachments			= attachments;
+		rp_info.subpassCount			= 1;
+		rp_info.pSubpasses				= &subpass;
+		rp_info.dependencyCount			= 1;
+		rp_info.pDependencies			= &dep;
+
+		VkRenderPass renderPass;
+		VkResult res = vkCreateRenderPass(device, &rp_info, NULL, &renderPass);
+		assert(res == VK_SUCCESS);
+
+		SetResourceName(device, VK_OBJECT_TYPE_RENDER_PASS, (uint64_t)renderPass, "SimpleColorWriteRenderPass");
+
+		return renderPass;
+	}
+
 	VkFramebuffer CreateFrameBuffer( VkDevice device, VkRenderPass renderPass, const std::vector<VkImageView>* pAttachments, uint32_t width, uint32_t height )
 	{
 		VkFramebufferCreateInfo framebuffer_info = {};

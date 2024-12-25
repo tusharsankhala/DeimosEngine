@@ -105,7 +105,20 @@ namespace Engine_VK
 		assert( res == VK_SUCCESS );
 	}
 
+	//--------------------------------------------------------------------------------------
+	//
+	// fsHdrInit, if it returns false then fsHDR extensions are not present.
+	//
+	//--------------------------------------------------------------------------------------
+	bool fsHdrInit(VkDevice device, VkSurfaceKHR surface, VkPhysicalDevice physicalDevice, HWND hWnd)
+	{
+		s_hWnd			= hWnd;
+		s_device		= device;
+		s_surface		= surface;
+		s_physicalDevice = physicalDevice;
 
+		return ExtAreFreeSyncHDRExtensionsPresent();
+	}
 
 	//--------------------------------------------------------------------------------------
 	//

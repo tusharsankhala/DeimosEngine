@@ -30,7 +30,7 @@ struct UIState
 	//
 	//-------------------------------------
 	float IBLFactor;
-	float EmissiveColor;
+	float EmissiveFactor;
 	int	  SelectedSkydomeTypeIndex;
 
 	bool  bDrawLightFrustum;

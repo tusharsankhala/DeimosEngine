@@ -39,7 +39,7 @@ public:
 	void SetSpeed( float speed ) { m_speed = speed; }
 	void SetProjectionJitter( float jitterX, float jitterY );
 	void SetProjectionJitter( uint32_t width, uint32_t height, uint32_t& sampleIndex );
-	void UpdatePreviousmatrices() { m_prevView = m_view; }
+	void UpdatePreviousMatrices() { m_prevView = m_view; }
 
 private:
 	math::Matrix4		m_view;

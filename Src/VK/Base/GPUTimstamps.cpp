@@ -69,7 +69,7 @@ namespace Engine_VK
 		uint32_t measurements = (uint32_t)gpuLabels.size();
 		if( measurements > 0 )
 		{
-			// Timestamp period is the numbe rof nanaseconds per timestamp value increment.
+			// Timestamp period is the number of nanaseconds per timestamp value increment.
 			double microsecondPerTick = (1e-3f * m_pDevice->GetPhysicalDeviceProperties().limits.timestampPeriod );
 			{
 				UINT64 timingInTicks[256] = {};

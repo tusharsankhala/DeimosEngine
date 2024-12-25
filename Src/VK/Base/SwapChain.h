@@ -19,6 +19,7 @@ namespace Engine_VK
 		bool			IsModeSupported( DisplayMode displayMode, PresentationMode fullScreenMode = PRESENTATIONMODE_WINDOWED, bool enableLocalDimming = true);
 		void			EnumerateDisplayModes( std::vector<DisplayMode>* pModes, std::vector<const char*>* pNames = NULL, bool includeFreesyncHDR = false, PresentationMode fullscreenMode = PRESENTATIONMODE_WINDOWED, bool enableLocalDimming = true );
 	
+		void			GetSemaphores(VkSemaphore* pImageAvailableSemaphore, VkSemaphore* pRenderFinishedSemaphores, VkFence* pCmdBufExecutedFences);
 		VkResult		Present();
 		uint32_t		WaitForSwapChain();
 

@@ -39,10 +39,18 @@
 
 #include "VK/Base/ShaderCompilerHelper.h"
 
+#include "VK/GLTF/GltfPbrPass.h"
+#include "VK/GLTF/GltfDepthPass.h"
+
+#include "VK/GLTF/GLTFTexturesAndBuffers.h"
 
 #include "Common/Misc/Misc.h"
 #include "Common/Misc/Camera.h"
 
+#include "VK/PostProcess/ColorConversionPS.h"
+#include "VK/PostProcess/SkyDome.h"
+#include "VK/PostProcess/SkyDomeProc.h"
+#include "VK/PostProcess/DownSamplePS.h"
 
 
 

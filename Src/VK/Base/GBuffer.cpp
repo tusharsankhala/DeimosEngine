@@ -168,7 +168,7 @@ namespace Engine_VK
 
 		if ( flags & GBUFFER_DEPTH )
 		{
-			addAttachment(m_formats[GBUFFER_DEPTH], m_sampleCount, previousColor, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, &colorAttachments[colorAttachmentCount++]);
+			addAttachment(m_formats[GBUFFER_DEPTH], m_sampleCount, previousColor, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, &depthAttachment);
 
 			// Assert if the RT is not present in the GBuffer.
 			assert( m_GBufferFlags & GBUFFER_DEPTH );
